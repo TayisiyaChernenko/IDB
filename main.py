@@ -53,5 +53,31 @@ def create_comment(id):
         return jsonify({'error': 'Failed to add comment'}), 500
     return jsonify(new_comment), 201
 
+# API endpoint to delete a discussion by ID
+@app.route('/discussions/<string:id>', methods=['DELETE'])
+def delete_discussion(id):
+    discussion = discussions_collection.find_one({'_id': ObjectId(id)})
+    if not discussion:
+        return jsonify({'error': 'Discussion not found'}), 404
+    result = discussions_collection.delete_one({'_id': ObjectId(id)})
+    if not result.deleted_count:
+        return jsonify({'error': 'Failed to delete discussion'}), 500
+    return jsonify({'message': 'Discussion deleted successfully'})
+
+# API endpoint to update a discussion by ID
+@app.route('/discussions/<string:id>', methods=['PUT'])
+def update_discussion(id):
+    discussion = discussions_collection.find_one({'_id': ObjectId(id)})
+    if not discussion:
+        return jsonify({'error': 'Discussion not found'}), 404
+    data = request.get_json()
+    result = discussions_collection.update_one(
+        {'_id': ObjectId(id)},
+        {'$set': {'title': data['title']}}
+    )
+    if not result.modified_count:
+        return jsonify({'error': 'Failed to update discussion'}), 500
+    return jsonify({'message': 'Discussion updated successfully'})
+
 if __name__ == '__main__':
     app.run(debug=True)
