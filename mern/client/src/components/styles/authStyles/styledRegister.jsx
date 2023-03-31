@@ -12,5 +12,15 @@ export const StyledRBgBox = styled.div `
     margin: 0 0 20px 0
     `;
 
-
-
+    export const StyledAuthButton = styled.button`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-radius: 10px;
+    border: 2px solid black;
+    width: 8vw;
+    height: 5vh;
+    color: black;
+    background-color: #EEEEEE;
+    margin: 0 0 10px 0;
+`;

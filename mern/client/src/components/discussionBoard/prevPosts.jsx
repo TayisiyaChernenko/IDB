@@ -1,5 +1,5 @@
 import React from "react";
-import { StyledPosts, StyledPrevPosts, StyledResponse } from "../styles/styledIDBHome";
+import { StyledPosts, StyledPrevPosts, StyledResponse } from "../styles/styledIDB/styledIDBHome";
 
 export const PrevPosts = () => (
       <StyledPrevPosts>

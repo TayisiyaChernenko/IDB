@@ -1,10 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { StyledLogIn, StyledTitle, StyledAuthInput, StyledAuthButton, StyledAuthLink} from "../styles/styledLogin";
-import { StyledRBgBox } from "../styles/styledRegister";
-import { StyledPage } from "../styles/styledPage";
-import { StyledCircles, StyledRings } from "../styles/styledDesign";
-import { Circles, Rings } from "../design";
+import { StyledLogIn, StyledTitle, StyledAuthInput, StyledAuthLink} from "../../styles/authStyles/styledLogin";
+import { StyledRBgBox, StyledAuthButton } from "../../styles/authStyles/styledRegister";
+import { StyledPage } from "../../styles/styledPage";
+import { StyledCircles, StyledRings } from "../../styles/styledDesign";
+import { Circles, Rings } from "../../design";
 
 export const Register = () => (
     <StyledPage>
@@ -16,7 +16,7 @@ export const Register = () => (
             <StyledAuthInput placeholder= "New UTD Username" />
             <StyledAuthInput placeholder= "New Password" />
             <StyledAuthInput placeholder= "Confirm New Password" />
-            <StyledAuthButton>Log In</StyledAuthButton>
+            <StyledAuthButton>Make An Account</StyledAuthButton>
             </StyledRBgBox>
             <StyledAuthLink><Link to="/"> Already have an account? Log in here</Link></StyledAuthLink>
         </StyledLogIn>

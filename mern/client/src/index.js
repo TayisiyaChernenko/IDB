@@ -4,8 +4,8 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import { LogIn } from "./components/login/login";
-import { Register } from "./components/register/register";
+import { LogIn } from "./components/authPages/login/login";
+import { Register } from "./components/authPages/register/register";
 
 import ErrorPage from "./components/errorpage";
 import { Board } from "./components/discussionBoard/board";

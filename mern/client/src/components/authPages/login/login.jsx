@@ -1,9 +1,9 @@
 import React from "react";
-import { StyledLogIn, StyledTitle, StyledBgBox, StyledAuthInput, StyledAuthLink, StyledAuthButton} from "../styles/styledLogin";
+import { StyledLogIn, StyledTitle, StyledBgBox, StyledAuthInput, StyledAuthLink, StyledAuthButton} from "../../styles/authStyles/styledLogin";
 import { Link } from "react-router-dom";
-import { Circles, Design, Mark, Rings } from "../design";
-import { StyledCircles, StyledMark, StyledRings } from "../styles/styledDesign";
-import { StyledPage } from "../styles/styledPage";
+import { Circles, Design, Mark, Rings } from "../../design";
+import { StyledCircles, StyledMark, StyledRings } from "../../styles/styledDesign";
+import { StyledPage } from "../../styles/styledPage";
 
 
 
