@@ -1,13 +1,34 @@
 import React from "react";
-import ReactDOM from "react-dom";
-import App from "./App";
-import { BrowserRouter } from "react-router-dom";
+import ReactDOM from "react-dom/client";
+import {
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
+import { LogIn } from "./components/login/login";
+import { Register } from "./components/register/register";
 
-ReactDOM.render(
+import ErrorPage from "./components/errorpage";
+import { Board } from "./components/discussionBoard/board";
+
+
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <LogIn/>,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/:register",
+    element: <Register />,
+  },
+  {
+    path: "/users/board",
+    element : <Board/>
+  }
+]);
+
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>,
-  document.getElementById("root")
+    <RouterProvider router={router} />
+  </React.StrictMode>
 );
