@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import jwt
 
 # Create a Flask app instance
 app = Flask(__name__)
@@ -8,7 +9,66 @@ app = Flask(__name__)
 # Connect to the MongoDB database
 client = MongoClient('mongodb://localhost:27017/')
 db = client['discussion_board']
-discussions_collection = db['discussions']
+users_collection = db['users']
+
+# Secret key for JWT
+app.config['SECRET_KEY'] = 'mysecretkey'
+
+# API endpoints for authentication and authorization
+@app.route('/auth/login', methods=['POST'])
+def login():
+    # Retrieve the JSON data sent in the request
+    data = request.get_json()
+    # Find the user with the given email
+    user = users_collection.find_one({'email': data.get('email')})
+    if not user or user['password'] != data.get('password'):
+        # If the user is not found or the password is incorrect, return an error message and 401 status code
+        return jsonify({'error': 'Invalid email or password'}), 401
+    # Create a JWT token for the user
+    token = jwt.encode({'user_id': str(user['_id'])}, app.config['SECRET_KEY'], algorithm='HS256')
+    # Return the token as a JSON object
+    return jsonify({'token': token})
+
+@app.route('/api/posts', methods=['GET'])
+def get_posts():
+    # Retrieve the JWT token from the Authorization header
+    token = request.headers.get('Authorization')
+    if not token:
+        # If the token is not found, return an error message and 401 status code
+        return jsonify({'error': 'Authorization required'}), 401
+    try:
+        # Verify the JWT token
+        data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        # Retrieve all posts from the database
+        posts = list(posts_collection.find())
+        # Return the posts as a JSON object
+        return jsonify(posts)
+    except jwt.exceptions.InvalidTokenError:
+        # If the token is invalid, return an error message and 401 status code
+        return jsonify({'error': 'Invalid token'}), 401
+
+@app.route('/api/posts/<string:id>', methods=['DELETE'])
+def delete_post(id):
+    # Retrieve the JWT token from the Authorization header
+    token = request.headers.get('Authorization')
+    if not token:
+        # If the token is not found, return an error message and 401 status code
+        return jsonify({'error': 'Authorization required'}), 401
+    try:
+        # Verify the JWT token
+        data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=['HS256'])
+        # Find the post with the given ID
+        post = posts_collection.find_one({'_id': ObjectId(id)})
+        if not post:
+            # If the post is not found, return an error message and 404 status code
+            return jsonify({'error': 'Post not found'}), 404
+        # Delete the post from the database
+        posts_collection.delete_one({'_id': ObjectId(id)})
+        # Return a success message as a JSON object
+        return jsonify({'message': 'Post deleted successfully'})
+    except jwt.exceptions.InvalidTokenError:
+        # If the token is invalid, return an error message and 401 status code
+        return jsonify({'error': 'Invalid token'}), 401
 
 # API endpoints for discussions
 @app.route('/discussions', methods=['GET'])
