@@ -77,5 +77,26 @@ def update_discussion(id):
         return jsonify({'error': 'Discussion not found or failed to update'}), 404
     return jsonify({'message': 'Discussion updated successfully'})
 
+@app.route('/admin/discussions/<string:id>', methods=['DELETE'])
+def delete_discussion_as_admin(id):
+    # Authenticate the user as an admin
+    if not is_admin(request):
+        return jsonify({'error': 'Not authorized'}), 401
+
+    # Delete the discussion with the given ID from the database
+    result = discussions_collection.delete_one({'_id': ObjectId(id)})
+    if not result.deleted_count:
+        # If the discussion is not found, return an error message and 404 status code
+        return jsonify({'error': 'Discussion not found'}), 404
+    # Return a success message as a JSON object
+    return jsonify({'message': 'Discussion deleted successfully'})
+
+def is_admin(request):
+    # Check if the request contains an authentication token or other means of identifying an admin user
+    # Return True if the user is an admin, False otherwise
+    # Example implementation:
+    token = request.headers.get('Authorization')
+    return token == 'admin_token'  # Replace with your own admin authentication logic
+
 if __name__ == '__main__':
     app.run(debug=True)
