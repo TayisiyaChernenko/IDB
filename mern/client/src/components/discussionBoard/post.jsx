@@ -1,12 +1,14 @@
 import React from "react"
-import { StyledExistingPost,StyledPostText  } from "../styles/styledIDB/styledExistingPost"
+import { StyledExistingPost,StyledPostText, StyledRepliesButton  } from "../styles/styledIDB/styledExistingPost"
 
 //This is the file for posts that are already in the database stytem
 
 export const Post = () => (
     <StyledExistingPost>
         <StyledPostText>This is an example of a response somone 
-        might have already provided to the IDB.</StyledPostText>
+        might have already provided to the IDB.
+        <StyledRepliesButton>Replies</StyledRepliesButton>
+        </StyledPostText>
     </StyledExistingPost>
 )
 

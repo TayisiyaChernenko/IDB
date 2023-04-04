@@ -21,3 +21,13 @@ width: 10vw;
 height: 8vh; 
 margin: 10px 0px 20px 0;
 `;
+
+export const StyledRepliesButton = styled.button `
+    color : rgb(5, 60, 10);
+    font-family : sans-serif;
+    border:0;
+    width: 7vw;
+    position:relative;
+    margin: 10px 0px 10px 100px;
+    border-radius: 20px;
+`

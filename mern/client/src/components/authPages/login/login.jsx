@@ -25,8 +25,8 @@ export const LogIn = () => {
             <StyledAuthInput 
                 {...passwordInput}
                 placeholder= "Password" />
-            <span>Value: {passwordInput.password} </span>
-            <StyledAuthButton>Log In
+            <StyledAuthButton>
+                  <Link to = "/users/board">Log In</Link>
             </StyledAuthButton>
             </StyledBgBox>
             <StyledAuthLink> 
