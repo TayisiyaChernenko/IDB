@@ -13,8 +13,8 @@ export const LogIn = () => {
     
     return(
        <StyledPage>
-            <StyledCircles><Circles/></StyledCircles>
         <StyledLogIn>
+            <StyledCircles><Circles/></StyledCircles>
             <StyledTitle><h1>Intelligent Discussion Board</h1></StyledTitle>
             <StyledBgBox>
             <StyledTitle><h3>Sign In</h3></StyledTitle>
@@ -26,7 +26,7 @@ export const LogIn = () => {
                 {...passwordInput}
                 placeholder= "Password" />
             <StyledAuthButton>
-                  <Link to = "/users/board">Log In</Link>
+                  <Link to = "/users">Log In</Link>
             </StyledAuthButton>
             </StyledBgBox>
             <StyledAuthLink> 

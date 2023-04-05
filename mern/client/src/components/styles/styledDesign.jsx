@@ -1,19 +1,17 @@
 import styled from "styled-components";
 
-export const StyledDesign= styled.div `
-    flex-direction: column;
-    
-    border-radius: 25px;
-    `;
-
 export const StyledCircles= styled.div `
-    float:right;
+    right:0;
+    align-self:right;
+
 `;  
 export const StyledRings= styled.div `
-    float:left;
     position:fixed;
     bottom:0px;
+    left:0;
 `;  
 export const StyledMark= styled.div `
     float:center;
+    width: 50px;
+    height: 70px;
 `;  

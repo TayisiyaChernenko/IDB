@@ -9,6 +9,7 @@ import { Register } from "./components/authPages/register/register";
 
 import ErrorPage from "./components/errorpage";
 import { Board } from "./components/discussionBoard/board";
+import { Welcome } from "./components/discussionBoard/welcome";
 
 
 const router = createBrowserRouter([
@@ -20,11 +21,19 @@ const router = createBrowserRouter([
   {
     path: "/:register",
     element: <Register />,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/users",
+    element : <Welcome/>,
+    errorElement: <ErrorPage />,
   },
   {
     path: "/users/board",
-    element : <Board/>
+    element : <Board/>,
+    errorElement: <ErrorPage />,
   }
+  
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
