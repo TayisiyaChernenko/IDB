@@ -14,7 +14,6 @@ export const LogIn = () => {
     return(
        <StyledPage>
         <StyledLogIn>
-            <StyledCircles><Circles/></StyledCircles>
             <StyledTitle><h1>Intelligent Discussion Board</h1></StyledTitle>
             <StyledBgBox>
             <StyledTitle><h3>Sign In</h3></StyledTitle>

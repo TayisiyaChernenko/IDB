@@ -1,7 +1,8 @@
 import uuid
 from typing import Optional
 from pydantic import BaseModel, Field
-from datetime import date, datetime, time, timedelta
+from datetime import datetime
+from typing import List
 
 class Post(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
@@ -10,7 +11,7 @@ class Post(BaseModel):
     text: str = Field(...)
     courseName: str = Field(...)
     sectionNum : int = Field(...)
-    replies : List[id] = []
+    replies : List[str] = Field(default_factory=list)
 
     class Config:
         allow_population_by_field_name = True
@@ -38,7 +39,7 @@ class BookUpdate(BaseModel):
                 "time" : "06:48"
             }
         }
-        
+
 class User(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
     email : str = Field(...)

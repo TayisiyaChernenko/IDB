@@ -37,3 +37,14 @@ export const StyledRepliesButton = styled.button `
 export const StyledCourseName= styled.div`
     align-self:center;
 `
+export const StyledPostName = styled.div `
+     font-family : sans-serif;
+     color: black;
+     align-self: left;
+`
+export const StyledPostDate = styled.div`
+    color: grey;
+    font-family: sans-serif;
+    align-self: left;
+    bottom: 0;
+`
