@@ -26,20 +26,6 @@ class Post(BaseModel):
             }
         }
 
-class BookUpdate(BaseModel):
-    text: Optional[str]
-    date: datetime.date
-    time : datetime.time
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "text": "Will there be extra credit opportunities in this course?",
-                "date" : "11-27",
-                "time" : "06:48"
-            }
-        }
-
 class User(BaseModel):
     id: str = Field(default_factory=uuid.uuid4, alias="_id")
     email : str = Field(...)
