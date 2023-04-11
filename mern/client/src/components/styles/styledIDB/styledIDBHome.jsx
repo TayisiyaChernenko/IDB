@@ -3,28 +3,29 @@ import styled from "styled-components";
 export const StyledPrevPosts = styled.div`
     display: flex;
     flex-direction: column;
-    align-items: left;
-    float:left;
-    margin: 10px 0px 20px 300px;
-`;
-
-export const StyledTextBox = styled.input `
-    display: flex;
-    flex-direction: column;
-    position:fixed;
-    bottom:10px;
+    align-items: stretch;
+    align-self: center;
     border: 1px solid black;
     border-radius: 25px;
-    width: 30vw;
-    right: 0px;
-    height: 50px;
-    background-color: #EEEEEE;
+    width: 70vw;
+    height: 60vh;
+    background-color: #d3d3d3;
     box-shadow: 2px 2px 2px 1px rgba(5, 60, 10, 0.8);
-    margin: 100px 0 20px 0;
 `;
 
 
 export const StyledBoard= styled.div `
-    flex-direction: column;
-    border-radius: 25px;
+    display:flex;
+    flex-direction:column;
+    align-items: center;
+    width: 70vw;
+    height: 100vh;
+    margin-left:auto;
 `;
+
+export const IDBLayout= styled.div `
+display:flex;
+flex-direction:row;
+width: 100vw;
+height: 100vh;
+`
