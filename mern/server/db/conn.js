@@ -1,9 +1,10 @@
+const { MongoClient } = require("mongodb");
 const Db = process.env.ATLAS_URI;
 const client = new MongoClient(Db, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
- 
+let usersCollection, postsCollection; 
 var _db;
  
 module.exports = {
@@ -12,8 +13,9 @@ module.exports = {
       // Verify we got a good "db" object
       if (db)
       {
-        _db = db.db("users");
-        console.log("Successfully connected to MongoDB."); 
+        _db = db.db('discussion_board');
+        usersCollection = db.collection('users');
+        postsCollection = db.collection('posts');
       }
       return callback(err);
          });
@@ -23,3 +25,4 @@ module.exports = {
     return _db;
   },
 };
+
