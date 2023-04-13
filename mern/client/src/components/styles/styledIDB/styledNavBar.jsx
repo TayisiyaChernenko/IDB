@@ -51,7 +51,7 @@ export const StyledClosedNav = styled.button `
     height: 30px;
     width: 7vw;
     display: flex;
-    border:0
+    border:0;
     justify-items: center;
     position: relative;
     border-radius: 5px;

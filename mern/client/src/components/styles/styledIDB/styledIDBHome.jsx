@@ -11,6 +11,22 @@ export const StyledPrevPosts = styled.div`
     height: 60vh;
     background-color: #d3d3d3;
     box-shadow: 2px 2px 2px 1px rgba(5, 60, 10, 0.8);
+    li{
+    list-style-type: none;
+    margin: 1rem 1rem;
+    }
+    ul{
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    }
+    li a {
+ // increases the surface area of the anchor tag to span more than just the anchor text
+    text-decoration: none;
+    display: block;
+    width: 100%;   
+   }
+
 `;
 
 
