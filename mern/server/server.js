@@ -7,27 +7,32 @@ const cors = require('cors');
 require("dotenv").config({ path: "./config.env" });
 const PORT = process.env.PORT || 3000;
 const Db = process.env.ATLAS_URI;
+var mongoose = require('mongoose');
+var Posts = require('./models/postModel');
+var Users = require('./models/userModel');
+
 
 // Create an Express app instance
 const app = express();
 app.use(bodyParser.json());
 app.use(cors());
 
+
 // Connect to the MongoDB database
 //const uri = 'mongodb://localhost:27017/';
 const client = new MongoClient(Db, { useNewUrlParser: true, useUnifiedTopology: true });
-let usersCollection, postsCollection;
+
 
 client.connect((err) => {
   if (err) throw err;
   const dbase = client.db('discussion_board');
-  usersCollection = dbase.collection('users');
-  postsCollection = dbase.collection('posts');
 });
+
+mongoose.connect(Db);
 
 // Secret key for JWT
 const SECRET_KEY = 'mysecretkey';
-
+/*
 // API endpoint for user authentication
 app.post('/auth/login', async (req, res) => {
   const { username, password } = req.body;
@@ -42,18 +47,34 @@ app.post('/auth/login', async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: 'Error during authentication' });
   }
+});*/
+
+//// REGISTRATION ////
+
+// API endpoint for a new user 
+app.post('/discussions/register', async (req, res) => {
+  var newUser = new Users ({
+    email: req.body.email,
+    firstName: req.body.firstName,
+    lastName: req.body.lastName,
+    password: req.body.password,
+    });
+  const createdUser = await newUser.save();
+  return res.status(201).json(createdUser);
 });
+
+//API endpoint to get user
 
 // API endpoint for fetching all posts
 app.get('/api/posts', async (req, res) => {
   try {
-    const posts = await postsCollection.find({}).toArray();
+    const posts = await Posts.find({}).toArray();
     res.json(posts);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching posts' });
   }
 });
-
+ /**
 // API endpoint for deleting a specific post
 app.delete('/api/posts/:id', async (req, res) => {
   const postId = req.params.id;
@@ -169,6 +190,7 @@ async function isAdmin(request) {
     return false;
   }
 }
+*/
 
 
 app.listen(PORT, () => {
