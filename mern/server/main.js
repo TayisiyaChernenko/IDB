@@ -3,10 +3,28 @@ const MongoClient = require('mongodb').MongoClient;
 const ObjectId = require('mongodb').ObjectId;
 const jwt = require('jsonwebtoken');
 const bodyParser = require('body-parser');
-var app = require('../server');
-// This will help us connect to the database
-const dbo = require("../db/conn");
- 
+const cors = require('cors');
+require("dotenv").config({ path: "./config.env" });
+const PORT = process.env.PORT || 3000;
+const Db = process.env.ATLAS_URI;
+
+// Create an Express app instance
+const app = express();
+app.use(bodyParser.json());
+app.use(cors());
+
+// Connect to the MongoDB database
+//const uri = 'mongodb://localhost:27017/';
+const client = new MongoClient(Db, { useNewUrlParser: true, useUnifiedTopology: true });
+let usersCollection, postsCollection;
+
+client.connect((err) => {
+  if (err) throw err;
+  const db = client.db('discussion_board');
+  usersCollection = db.collection('users');
+  postsCollection = db.collection('posts');
+});
+
 // Secret key for JWT
 const SECRET_KEY = 'mysecretkey';
 
@@ -151,3 +169,9 @@ async function isAdmin(request) {
     return false;
   }
 }
+
+
+app.listen(PORT, () => {
+
+  console.log(`Server is running on port ${PORT}`);
+});
