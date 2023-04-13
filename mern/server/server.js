@@ -20,9 +20,9 @@ let usersCollection, postsCollection;
 
 client.connect((err) => {
   if (err) throw err;
-  const db = client.db('discussion_board');
-  usersCollection = db.collection('users');
-  postsCollection = db.collection('posts');
+  const dbase = client.db('discussion_board');
+  usersCollection = dbase.collection('users');
+  postsCollection = dbase.collection('posts');
 });
 
 // Secret key for JWT
