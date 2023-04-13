@@ -5,7 +5,9 @@ import { StyledRBgBox, StyledAuthButton, StyledAuthInput } from "../../styles/au
 import { StyledPage } from "../../styles/styledPage";
 import { StyledRings } from "../../styles/styledDesign";
 import { Rings } from "../../design";
-import { useState, useEffect } from "react";
+import { useState} from "react";
+import { useNavigate } from "react-router";
+
 
 export const Register = () => {
    const emailInput = useEmail();
@@ -13,10 +15,28 @@ export const Register = () => {
    const password2Input = useConfirmPassword();
    const firstInput = useFirstname();
    const lastInput = useLastname();
-  
-   function registeredNotif() {
-            alert("You've made a new user profile")
-   }
+   const navigate = useNavigate();
+   
+   const handleClick = (e) => {
+        
+        const registrationInfo = {
+          email: emailInput.email,
+          firstName: firstInput.firstname,
+          lastName: lastInput.lastname,
+          password : passwordInput.password,
+        };
+      
+        // This will send a post request to update the data in the database.
+        fetch(`http://localhost:3000/discussions/register`, {
+          method: "POST",
+          body: JSON.stringify(registrationInfo),
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        });
+        navigate("/");
+      }
+   
 
    return(
   <StyledPage>
@@ -39,7 +59,7 @@ export const Register = () => {
            <StyledAuthInput
                {...password2Input}
                placeholder= "Confirm New Password" />
-           <StyledAuthButton onClick = {registeredNotif}> Make An Account</StyledAuthButton>
+           <StyledAuthButton onClick = {handleClick}> Make An Account</StyledAuthButton>
            </StyledRBgBox>
            <StyledAuthLink><Link to="/"> Already have an account? Log in here</Link></StyledAuthLink>
        </StyledLogIn>
