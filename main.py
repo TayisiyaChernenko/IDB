@@ -1,108 +1,173 @@
-from flask import Flask, jsonify, request
-from pymongo import MongoClient
-from bson.objectid import ObjectId
-import jwt
-from datetime import datetime
-from typing import List
+const express = require('express');
+const MongoClient = require('mongodb').MongoClient;
+const ObjectId = require('mongodb').ObjectId;
+const jwt = require('jsonwebtoken');
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
-# Create a Flask app instance
-app = Flask(__name__)
+// Create an Express app instance
+const app = express();
+app.use(bodyParser.json());
+app.use(cors());
 
-# Connect to the MongoDB database
-client = MongoClient('mongodb://localhost:27017/')
-db = client['discussion_board']
-users_collection = db['users']
-posts_collection = db['posts']
+// Connect to the MongoDB database
+const uri = 'mongodb://localhost:27017/';
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+let usersCollection, postsCollection;
 
-# Secret key for JWT
-app.config['SECRET_KEY'] = 'mysecretkey'
+client.connect((err) => {
+  if (err) throw err;
+  const db = client.db('discussion_board');
+  usersCollection = db.collection('users');
+  postsCollection = db.collection('posts');
+});
 
-# API endpoint for user authentication
-@app.route('/auth/login', methods=['POST'])
-def login():
-    # Handle user authentication and generate JWT token
-    # ...
+// Secret key for JWT
+const SECRET_KEY = 'mysecretkey';
 
-    return jsonify({'token': token})
+// API endpoint for user authentication
+app.post('/auth/login', async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const user = await usersCollection.findOne({ username, password });
+    if (user) {
+      const token = jwt.sign({ userId: user._id }, SECRET_KEY);
+      res.json({ token });
+    } else {
+      res.status(401).json({ message: 'Invalid username or password' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error during authentication' });
+  }
+});
 
-# API endpoint for fetching all posts
-@app.route('/api/posts', methods=['GET'])
-def get_posts():
-    # Retrieve all posts from the database
-    # ...
+// API endpoint for fetching all posts
+app.get('/api/posts', async (req, res) => {
+  try {
+    const posts = await postsCollection.find({}).toArray();
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching posts' });
+  }
+});
 
-    return jsonify(posts)
+// API endpoint for deleting a specific post
+app.delete('/api/posts/:id', async (req, res) => {
+  const postId = req.params.id;
+  try {
+    await postsCollection.deleteOne({ _id: ObjectId(postId) });
+    res.json({ message: 'Post deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting post' });
+  }
+});
 
-# API endpoint for deleting a specific post
-@app.route('/api/posts/<string:id>', methods=['DELETE'])
-def delete_post(id):
-    # Handle post deletion by verifying JWT token and post ID
-    # ...
+// API endpoint for fetching all discussions
+app.get('/discussions', async (req, res) => {
+  try {
+    const discussions = await postsCollection.find({}).toArray();
+    res.json(discussions);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching discussions' });
+  }
+});
 
-    return jsonify({'message': 'Post deleted successfully'})
+// API endpoint for fetching a specific discussion
+app.get('/discussions/:id', async (req, res) => {
+  const discussionId = req.params.id;
+  try {
+    const discussion = await postsCollection.findOne({ _id: ObjectId(discussionId) });
+    res.json(discussion);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching discussion' });
+  }
+});
 
-# API endpoint for fetching all discussions
-@app.route('/discussions', methods=['GET'])
-def get_discussions():
-    # Retrieve all discussions from the database
-    # ...
+// API endpoint for creating a new discussion
+app.post('/discussions', async (req, res) => {
+  const discussion = req.body;
+  try {
+    const result = await postsCollection.insertOne(discussion);
+    res.status(201).json(result.ops[0]);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating discussion' });
+  }
+});
 
-    return jsonify(discussions)
+// API endpoint for adding a comment to a specific discussion
+app.post('/discussions/:id/comments', async (req, res) => {
+  const discussionId = req.params.id;
+  const comment = req.body;
+  try {await postsCollection.updateOne(
+      { _id: ObjectId(discussionId) },
+      { $push: { comments: comment } }
+    );
+    res.status(201).json(comment);
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding comment' });
+  }
+});
 
-# API endpoint for fetching a specific discussion
-@app.route('/discussions/<string:id>', methods=['GET'])
-def get_discussion(id):
-    # Retrieve a specific discussion by its ID
-    # ...
+// API endpoint for deleting a specific discussion
+app.delete('/discussions/:id', async (req, res) => {
+  const discussionId = req.params.id;
+  try {
+    await postsCollection.deleteOne({ _id: ObjectId(discussionId) });
+    res.json({ message: 'Discussion deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting discussion' });
+  }
+});
 
-    return jsonify(discussion)
+// API endpoint for updating a specific discussion
+app.put('/discussions/:id', async (req, res) => {
+  const discussionId = req.params.id;
+  const updatedDiscussion = req.body;
+  try {
+    await postsCollection.updateOne(
+      { _id: ObjectId(discussionId) },
+      { $set: updatedDiscussion }
+    );
+    res.json({ message: 'Discussion updated successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating discussion' });
+  }
+});
 
-# API endpoint for creating a new discussion
-@app.route('/discussions', methods=['POST'])
-def create_discussion():
-    # Handle creation of a new discussion
-    # ...
+// API endpoint for admin to delete a specific discussion
+app.delete('/admin/discussions/:id', async (req, res) => {
+  const discussionId = req.params.id;
+  if (isAdmin(req)) {
+    try {
+      await postsCollection.deleteOne({ _id: ObjectId(discussionId) });
+      res.json({ message: 'Discussion deleted successfully' });
+    } catch (error) {
+      res.status(500).json({ message: 'Error deleting discussion' });
+    }
+  } else {
+    res.status(403).json({ message: 'Not authorized' });
+  }
+});
 
-    return jsonify(new_discussion), 201
+// Function to check if a user is an admin
+async function isAdmin(request) {
+  const token = request.headers.authorization;
+  
+  if (!token) {
+    return false;
+  }
 
-# API endpoint for adding a comment to a specific discussion
-@app.route('/discussions/<string:id>/comments', methods=['POST'])
-def create_comment(id):
-    # Handle the addition of a comment to a discussion
-    # ...
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const user = await usersCollection.findOne({ _id: ObjectId(decoded.userId) });
 
-    return jsonify(new_comment), 201
+    return user && user.role === 'admin';
+  } catch (error) {
+    return false;
+  }
+}
 
-# API endpoint for deleting a specific discussion
-@app.route('/discussions/<string:id>', methods=['DELETE'])
-def delete_discussion(id):
-    # Handle deletion of a specific discussion by its ID
-    # ...
-
-    return jsonify({'message': 'Discussion deleted successfully'})
-
-# API endpoint for updating a specific discussion
-@app.route('/discussions/<string:id>', methods=['PUT'])
-def update_discussion(id):
-    # Handle updating a specific discussion by its ID
-    # ...
-
-    return jsonify({'message': 'Discussion updated successfully'})
-
-# API endpoint for admin to delete a specific discussion
-@app.route('/admin/discussions/<string:id>', methods=['DELETE'])
-def delete_discussion_as_admin(id):
-    # Handle deletion of a specific discussion by an admin
-    # ...
-
-    return jsonify({'message': 'Discussion deleted successfully'})
-
-# Function to check if a user is an admin
-def is_admin(request):
-    # Check if the request contains an authentication token or other means of identifying an admin user
-    # ...
-
-    return token == 'admin_token'
-
-if __name__ == '__main__':
-    app.run(debug=True)
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
