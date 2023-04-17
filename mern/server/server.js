@@ -92,7 +92,6 @@ router.route("/updatecourses").put(function(req, res) {
 */
 //Get all user's
 app.get('/api/users', async (req, res) => {
-  console.log("In the API getter");
   try {
     const users = await Users.find({});
     console.log(users);
@@ -111,6 +110,7 @@ app.get('/api/posts', async (req, res) => {
     res.status(500).json({ message: 'Error fetching posts' });
   }
 });
+
 
 // Create a new post
 app.post('/api/posts', async (req, res) => {
