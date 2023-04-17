@@ -21,8 +21,26 @@ app.use(bodyParser.json());
 app.use(cors());
 
 // Connect to the MongoDB database using Mongoose
-mongoose.connect(Db, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false });
-
+mongoose.connect(Db);
+// Secret key for JWT
+const SECRET_KEY = 'mysecretkey';
+/*
+// API endpoint for user authentication
+app.post('/auth/login', async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await usersCollection.findOne({ email, password });
+    if (user) {
+      const token = jwt.sign({ userId: user._id }, SECRET_KEY);
+      res.json({token});
+    } else {
+      res.status(401).json({ message: 'Invalid username or password' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Error during authentication' });
+  }
+});
+*/
 // Register a new user
 app.post('/discussions/register', async (req, res) => {
   var newUser = new Users({
@@ -36,6 +54,51 @@ app.post('/discussions/register', async (req, res) => {
     return res.status(201).json(createdUser);
   } catch (error) {
     res.status(500).json({ message: 'Error during registration' });
+  }
+});
+/*
+// API Endpoint for fetching a specific class/section pair
+app.get("/discussion/courses/:id", async (req, res) => {
+  const { id } = req.params;
+  const enrolledIn = await enrolledIn.findById(id);
+  return res.status(200).json(enrolledIn);
+});
+
+// API Endpoint for fetching all of a user's class/section pairs
+app.get("/discussion/courses/:id", async (req, res) => {
+  const { id } = req.params;
+  const enrolledIn = await enrolledIn.findById(id);
+  return res.status(200).json(enrolledIn);
+});
+
+// API Endpoint for adding user's class/section pairs
+router.route("/updatecourses").put(function(req, res) {
+  const id = req.id;
+  var enrolledIn = new Users.enrolled in({
+      course: req.course,
+      section : req.section
+  }) 
+  Contact.findByIdAndUpdate(
+    id,
+    {$push: {"enrolledIn": enrolledIn}},
+    {safe: true, upsert: true},
+    function(err, model) {
+        console.log(err);
+    }
+);
+});
+
+
+*/
+//Get all user's
+app.get('/api/users', async (req, res) => {
+  console.log("In the API getter");
+  try {
+    const users = await Users.find({});
+    console.log(users);
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching users' });
   }
 });
 
