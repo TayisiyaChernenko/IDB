@@ -114,15 +114,31 @@ app.get('/api/posts', async (req, res) => {
 
 // Create a new post
 app.post('/api/posts', async (req, res) => {
-  var newPost = new Posts({
-    text: req.body.text,
-    courseName: req.body.courseName,
-    sectionNum: req.body.sectionNum,
-    datePosted: req.body.datePosted,
-    replies: req.body.replies || [],
-  });
+  const userId = req.body.userId;
+
   try {
+    // Get the user by ID
+    const user = await Users.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Create the new post
+    var newPost = new Posts({
+      text: req.body.text,
+      courseName: req.body.courseName,
+      sectionNum: req.body.sectionNum,
+      datePosted: req.body.datePosted,
+      replies: req.body.replies || [],
+    });
+
     const createdPost = await newPost.save();
+
+    // Update the user's posts array with the new post's ID
+    user.postIds.push(createdPost._id);
+    await user.save();
+
     res.status(201).json(createdPost);
   } catch (error) {
     res.status(500).json({ message: 'Error creating post' });
@@ -132,7 +148,19 @@ app.post('/api/posts', async (req, res) => {
 // Update an existing post by ID
 app.put('/api/posts/:id', async (req, res) => {
   const postId = req.params.id;
+  const userId = req.body.userId;
+
   try {
+    const post = await Posts.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const user = await Users.findById(userId);
+    if (!user || !user.postIds.includes(postId)) {
+      return res.status(403).json({ message: 'You are not allowed to update this post' });
+    }
+
     const updatedPost = await Posts.findByIdAndUpdate(postId, req.body, { new: true });
     res.json({ message: 'Post updated successfully', updatedPost });
   } catch (error) {
@@ -143,8 +171,23 @@ app.put('/api/posts/:id', async (req, res) => {
 // Delete a post by ID
 app.delete('/api/posts/:id', async (req, res) => {
   const postId = req.params.id;
+  const userId = req.body.userId;
+
   try {
+    const post = await Posts.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const user = await Users.findById(userId);
+    if (!user || !user.postIds.includes(postId)) {
+      return res.status(403).json({ message: 'You are not allowed to delete this post' });
+    }
+
     await Posts.findByIdAndDelete(postId);
+    user.postIds = user.postIds.filter(id => id.toString() !== postId);
+    await user.save();
+
     res.json({ message: 'Post deleted successfully' });
   } catch (error) {
     res.status(500).json({ message: 'Error deleting post' });
