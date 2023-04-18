@@ -11,7 +11,7 @@ export const StyledOpenNav = styled.div `
   display: inline-block;
 }
   height: 80vh;
-  width: 7vw;
+  width: 12vw;
   display: flex;
   flex-direction:column;
   justify-items: center;

@@ -1,7 +1,7 @@
 import React from "react";
 import { IDBLayout, StyledBoard } from "../styles/styledIDB/styledIDBHome";
 import { StyledTitle } from "../styles/authStyles/styledLogin";
-import { Nav } from "./nav";
+import { Nav } from "./nav/nav";
 
 
 

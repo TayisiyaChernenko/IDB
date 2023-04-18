@@ -1,16 +1,39 @@
 import React from "react";
 import { StyledLogIn, StyledTitle, StyledBgBox, StyledAuthInput, StyledAuthLink, StyledAuthButton} from "../../styles/authStyles/styledLogin";
 import { Link } from "react-router-dom";
-import { Circles, Rings } from "../../design";
-import { StyledCircles, StyledRings } from "../../styles/styledDesign";
+import {Rings } from "../../design";
+import { StyledRings } from "../../styles/styledDesign";
 import { StyledPage } from "../../styles/styledPage";
 import { useState } from "react";
+import { isExpired, decodeToken } from "react-jwt";
 
 
 export const LogIn = () => {
-    const usernameInput = useUsername();
-    const passwordInput = usePassword();   
+    const emailInput = useEmail();
+    const passwordInput = usePassword();  
+    const  loginInfo = {
+        email : emailInput.email,
+        password: passwordInput.password
+    };
     
+    const handleClick = () => {
+        fetch("http://localhost:3000/api/users",{
+            method: 'post',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(emailInput.email),
+            }).then((response) => {
+            if (response.statusText === "OK"){
+                const decoded = decodeToken(response.body);
+                var userId = decoded.id  
+                console.log(userId)  
+            } else {
+                alert ('Incorrect Login Credentials');
+            }
+        })
+        } 
     return(
        <StyledPage>
         <StyledLogIn>
@@ -18,14 +41,14 @@ export const LogIn = () => {
             <StyledBgBox>
             <StyledTitle><h3>Sign In</h3></StyledTitle>
             <StyledAuthInput 
-                {...usernameInput}
+                {...emailInput}
                 placeholder= "Username"  />
-            <span>Value: {usernameInput.username} </span>
+            <span>Value: {emailInput.email} </span>
             <StyledAuthInput 
                 {...passwordInput}
                 placeholder= "Password" />
             <StyledAuthButton>
-                  <Link to = "/users">Log In</Link>
+                  <Link to = "/users/board">Log In</Link>
             </StyledAuthButton>
             </StyledBgBox>
             <StyledAuthLink> 
@@ -37,15 +60,15 @@ export const LogIn = () => {
        );
 }
 
-const useUsername = () => {
-    const [username, setUsername] = useState('');
+const useEmail = () => {
+    const [email, setEmail] = useState('');
     
     function onChange(e) {
-        setUsername(e.target.value);
+        setEmail(e.target.value);
       }
 
     return{
-        username,
+        email,
         onChange,
     };
 };

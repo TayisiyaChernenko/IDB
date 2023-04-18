@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import { StyledPrevPosts} from "../styles/styledIDB/styledIDBHome";
 import { StyledCourseName } from "../styles/styledIDB/styledExistingPost";
+import { Post } from "./post";
 
 
 export const PrevPosts = () => {
