@@ -129,13 +129,16 @@ app.post('/api/posts', async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+    const belongsTo = {
+      course: req.body.courseName,
+      section: req.body.sectionNum,
+    }
 
     // Create the new post
     var newPost = new Posts({
       text: req.body.text,
-      courseName: req.body.courseName,
-      sectionNum: req.body.sectionNum,
-      datePosted: req.body.datePosted,
+      belongsToDiscission: belongsTo,
+      //datePosted: req.body.datePosted,
       replies: req.body.replies || [],
     });
 
