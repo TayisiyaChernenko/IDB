@@ -17,8 +17,10 @@ import { StyledMark } from "../styles/styledDesign";
 
 export const Board = () => (
     <IDBLayout>
+        <div>
         <Nav></Nav>
         <StyledMark><Mark/></StyledMark>
+        </div>
         <StyledBoard>
             <StyledTitle><h1>Intelligent Discussion Board</h1></StyledTitle>
             <PrevPosts>
@@ -26,5 +28,4 @@ export const Board = () => (
             <CreatePost/>
         </StyledBoard>
     </IDBLayout>    
-
 ) 

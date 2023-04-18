@@ -12,6 +12,6 @@ export const StyledRings= styled.div `
 `;  
 export const StyledMark= styled.div `
     float:center;
-    width: 50px;
-    height: 70px;
+    width: 5vw;
+    height: 5vh;
 `;  

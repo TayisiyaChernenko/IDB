@@ -25,5 +25,4 @@ export const StyledNavAddCourses= styled.div `
   align-items: center;
   position:absolute;
   bottom: 0%;
-  background-color: rgba(0, 33, 3, 0.8);
 `

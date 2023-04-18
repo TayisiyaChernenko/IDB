@@ -7,8 +7,9 @@ export const StyledPrevPosts = styled.div`
     align-self: center;
     border: 1px solid black;
     border-radius: 25px;
-    width: 70vw;
-    height: 60vh;
+    width: 75vw;
+    height: 75vh;
+    margin-right: 5%;
     background-color: #d3d3d3;
     box-shadow: 2px 2px 2px 1px rgba(5, 60, 10, 0.8);
     li{
@@ -34,10 +35,10 @@ export const StyledBoard= styled.div `
     display:flex;
     flex-direction:column;
     align-items: center;
-    width: 70vw;
+    width: 90vw;
     height: 100vh;
-    margin-left:auto;
-`;
+    padding-left: 4vw;
+    `;
 
 export const IDBLayout= styled.div `
 display:flex;

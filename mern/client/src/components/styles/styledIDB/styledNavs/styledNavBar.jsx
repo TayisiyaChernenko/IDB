@@ -7,10 +7,10 @@ export const StyledOpenNav = styled.div `
 }
 
 #nav.open {
-  height: 400px;
+
   display: inline-block;
 }
-  height: 80vh;
+  height: 75vh;
   width: 12vw;
   display: flex;
   flex-direction:column;
