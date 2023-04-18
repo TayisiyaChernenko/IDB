@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react"
 import {StyledNavTitle, StyledOpenNav} from "../../styles/styledIDB/styledNavs/styledNavBar"
 import { NavAddClasses } from "./navAddClass";
+import { Link } from "react-router-dom";
 export const Nav = () => {
 
     const [discussionBoards, setDiscussionBoards] = useState([])
@@ -19,12 +20,11 @@ export const Nav = () => {
                 <hr></hr>
                 <ul>
                 {discussionBoards.map(discussionBoard => (
-                <li key={discussionBoard._id}>{discussionBoard.course} {discussionBoard.section}</li>
+                <li key={discussionBoard._id}><Link to = "/users/board/" state={{id: userId, course: discussionBoard.course, section: discussionBoard.section }} color="white" >{discussionBoard.course} {discussionBoard.section}</Link></li>
                 ))}
             </ul>
             <NavAddClasses/>
             </StyledOpenNav>
-            
         </div>
     )
 }

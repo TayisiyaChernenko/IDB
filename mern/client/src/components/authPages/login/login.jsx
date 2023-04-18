@@ -5,7 +5,8 @@ import {Rings } from "../../design";
 import { StyledRings } from "../../styles/styledDesign";
 import { StyledPage } from "../../styles/styledPage";
 import { useState } from "react";
-import { isExpired, decodeToken } from "react-jwt";
+//import { decodeToken } from "react-jwt";
+import { useNavigate } from "react-router";
 
 
 export const LogIn = () => {
@@ -15,25 +16,28 @@ export const LogIn = () => {
         email : emailInput.email,
         password: passwordInput.password
     };
+    const [userId, setUserId] = useState("");
+    const navigate = useNavigate();
     
     const handleClick = () => {
-        fetch("http://localhost:3000/api/users",{
+        fetch("http://localhost:3000/auth/login",{
             method: 'post',
             headers: {
                 'Accept': 'application/json, text/plain, */*',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(emailInput.email),
+            body: JSON.stringify(loginInfo),
             }).then((response) => {
             if (response.statusText === "OK"){
-                const decoded = decodeToken(response.body);
-                var userId = decoded.id  
-                console.log(userId)  
+                const id = response.json();
+                setUserId(id);
+                navigate('/users/', {state:{id:userId}});
             } else {
                 alert ('Incorrect Login Credentials');
             }
         })
         } 
+
     return(
        <StyledPage>
         <StyledLogIn>
@@ -43,12 +47,10 @@ export const LogIn = () => {
             <StyledAuthInput 
                 {...emailInput}
                 placeholder= "Username"  />
-            <span>Value: {emailInput.email} </span>
             <StyledAuthInput 
                 {...passwordInput}
                 placeholder= "Password" />
-            <StyledAuthButton>
-                  <Link to = "/users/board">Log In</Link>
+            <StyledAuthButton onClick={handleClick}> Log In
             </StyledAuthButton>
             </StyledBgBox>
             <StyledAuthLink> 

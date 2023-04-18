@@ -39,8 +39,9 @@ export const StyledOpenNav = styled.div `
   width: 100%;
 
 }
-
-
+link {
+  color: white;
+}
 `
 export const StyledNavTitle = styled.nav`
 margin-left:5px;

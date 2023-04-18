@@ -24,15 +24,16 @@ app.use(cors());
 mongoose.connect(Db);
 // Secret key for JWT
 const SECRET_KEY = 'mysecretkey';
-/*
+
 // API endpoint for user authentication
 app.post('/auth/login', async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await usersCollection.findOne({ email, password });
+    const user = await Users.findOne({ email:email, password:password });
     if (user) {
-      const token = jwt.sign({ userId: user._id }, SECRET_KEY);
-      res.json({token});
+      //const token = jwt.sign({ userId: user._id }, SECRET_KEY);
+      console.log(user._id);
+      res.json(user._id);
     } else {
       res.status(401).json({ message: 'Invalid username or password' });
     }
@@ -40,7 +41,7 @@ app.post('/auth/login', async (req, res) => {
     res.status(500).json({ message: 'Error during authentication' });
   }
 });
-*/
+
 // Register a new user
 app.post('/discussions/register', async (req, res) => {
   var newUser = new Users({

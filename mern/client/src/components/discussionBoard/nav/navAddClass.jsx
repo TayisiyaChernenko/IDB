@@ -28,7 +28,6 @@ export const NavAddClasses = () => {
                 alert ('Could not add class');
             }
         })
-        navigate("/users/board");
     }
     
     
