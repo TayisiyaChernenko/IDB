@@ -24,15 +24,16 @@ app.use(cors());
 mongoose.connect(Db);
 // Secret key for JWT
 const SECRET_KEY = 'mysecretkey';
-/*
+
 // API endpoint for user authentication
 app.post('/auth/login', async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await usersCollection.findOne({ email, password });
+    const user = await Users.findOne({ email:email, password:password });
     if (user) {
-      const token = jwt.sign({ userId: user._id }, SECRET_KEY);
-      res.json({token});
+      //const token = jwt.sign({ userId: user._id }, SECRET_KEY);
+      console.log(user._id);
+      res.json(user._id);
     } else {
       res.status(401).json({ message: 'Invalid username or password' });
     }
@@ -40,7 +41,7 @@ app.post('/auth/login', async (req, res) => {
     res.status(500).json({ message: 'Error during authentication' });
   }
 });
-*/
+
 // Register a new user
 app.post('/discussions/register', async (req, res) => {
   var newUser = new Users({
@@ -48,6 +49,8 @@ app.post('/discussions/register', async (req, res) => {
     firstName: req.body.firstName,
     lastName: req.body.lastName,
     password: req.body.password,
+    postId: [],
+    enrolledIn: [],
   });
   try {
     const createdUser = await newUser.save();
@@ -56,41 +59,24 @@ app.post('/discussions/register', async (req, res) => {
     res.status(500).json({ message: 'Error during registration' });
   }
 });
-/*
-// API Endpoint for fetching a specific class/section pair
-app.get("/discussion/courses/:id", async (req, res) => {
-  const { id } = req.params;
-  const enrolledIn = await enrolledIn.findById(id);
-  return res.status(200).json(enrolledIn);
-});
+
 
 // API Endpoint for fetching all of a user's class/section pairs
-app.get("/discussion/courses/:id", async (req, res) => {
-  const { id } = req.params;
-  const enrolledIn = await enrolledIn.findById(id);
-  return res.status(200).json(enrolledIn);
-});
-
-// API Endpoint for adding user's class/section pairs
-router.route("/updatecourses").put(function(req, res) {
-  const id = req.id;
-  var enrolledIn = new Users.enrolled in({
-      course: req.course,
-      section : req.section
-  }) 
-  Contact.findByIdAndUpdate(
-    id,
-    {$push: {"enrolledIn": enrolledIn}},
-    {safe: true, upsert: true},
-    function(err, model) {
-        console.log(err);
-    }
-);
+app.get(`/discussion/courses/:id`, async (req, res) => {
+  const id = req.params.id;
+  try {
+  const user = await Users.findById(id);
+  console.log(user);
+  const enrolledIn = user.enrolledIn;
+  console.log(enrolledIn);
+  res.json(enrolledIn);
+  } catch(error){
+    res.status(500).json({ message: 'Error fetching discussions' });
+  }
 });
 
 
-*/
-//Get all user's
+//Get all users
 app.get('/api/users', async (req, res) => {
   try {
     const users = await Users.find({});
@@ -111,6 +97,26 @@ app.get('/api/posts', async (req, res) => {
   }
 });
 
+// Add a course/section pair to a User's course list
+app.post('/api/courses', async (req, res) => {
+  const userId = req.body.userId;
+  try {
+    // Get the user by ID
+    const user = await Users.findById(userId);
+    if (!user) {
+      console.log("no user")
+      return res.status(404).json({ message: 'User not found' });
+    }
+    const course = req.body.course;
+    const section = req.body.section;
+    // Update the user's enrolledIn array with the new course/section
+    user.enrolledIn.push({course: course , section: section});
+    await user.save();
+  } catch (error) {
+    console.log("Class Not Added")
+    res.status(500).json({ message: 'Error adding class' });
+  }
+});
 
 // Create a new post
 app.post('/api/posts', async (req, res) => {

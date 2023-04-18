@@ -7,11 +7,11 @@ export const StyledOpenNav = styled.div `
 }
 
 #nav.open {
-  height: 400px;
+
   display: inline-block;
 }
-  height: 80vh;
-  width: 7vw;
+  height: 75vh;
+  width: 12vw;
   display: flex;
   flex-direction:column;
   justify-items: center;
@@ -39,8 +39,9 @@ export const StyledOpenNav = styled.div `
   width: 100%;
 
 }
-
-
+link {
+  color: white;
+}
 `
 export const StyledNavTitle = styled.nav`
 margin-left:5px;
