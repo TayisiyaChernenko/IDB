@@ -6,7 +6,6 @@ import { Post } from "./post";
 
 export const PrevPosts = (props) => {
     //will have to take all posts and somehow pass the ID as props to post to render each post for the course 
-    const userId = props.userId;
     const course = props.course;
     const section = props.section;
     const [posts, setPosts] = useState([]);
@@ -17,13 +16,15 @@ export const PrevPosts = (props) => {
       fetch(url,{method: 'get'})
       .then(response => {return response.json()})
       .then(data => {setPosts(data)})
+      console.log("In the previous posts section");
+      console.log(posts);
   }, [])
 
   return (
     <StyledPrevPosts >
        <StyledCourseName><h3>{course} {section}</h3> </StyledCourseName>
        <ul>
-           {posts.map((post) => <li>{post.text}</li>)}
+           {posts.map(post => (<li key={post._id}><Post {...post}/></li>))}
        </ul>
      </StyledPrevPosts>
     );

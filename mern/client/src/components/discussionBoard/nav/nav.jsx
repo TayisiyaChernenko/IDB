@@ -8,10 +8,10 @@ export const Nav = (props) => {
     const userId = props.userId;
 
     useEffect(() => {
-        fetch("http://localhost:3000/discussion/courses/" + userId,{method: 'get'})
+        fetch("http://localhost:3000/discussion/courses?id=" + userId,{method: 'get'})
         .then(response => {return response.json()})
         .then(data => {setDiscussionBoards(data)})
-    })
+    },[])
     
     return(
         <div>
@@ -20,7 +20,7 @@ export const Nav = (props) => {
                 <hr></hr>
                 <ul>
                 {discussionBoards.map(discussionBoard => (
-                <li key={discussionBoard._id}><Link to = "/users/board/" state={{id: userId, course: discussionBoard.course, section: discussionBoard.section }} color="white" >{discussionBoard.course} {discussionBoard.section}</Link></li>
+                <li key={discussionBoard._id}><Link to = "/users/board/"  state={{id: userId, course: discussionBoard.course, section: discussionBoard.section }}> {discussionBoard.course} {discussionBoard.section}</Link></li>
                 ))}
             </ul>
             <NavAddClasses {...props}/>

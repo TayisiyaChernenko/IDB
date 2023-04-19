@@ -27,7 +27,7 @@ export const Board = () => {
     <IDBLayout>
         <div>
         <Nav {...props}/>
-        <StyledMark></StyledMark>
+        <StyledMark><Mark/></StyledMark>
         </div>
         <StyledBoard>
             <StyledTitle><h1>Intelligent Discussion Board</h1></StyledTitle>

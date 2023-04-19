@@ -14,7 +14,7 @@ export const StyledPrevPosts = styled.div`
     box-shadow: 2px 2px 2px 1px rgba(5, 60, 10, 0.8);
     li{
     list-style-type: none;
-    margin: 1rem 1rem;
+    margin-bottom: 2px;
     }
     ul{
     display: flex;
