@@ -208,7 +208,57 @@ app.delete('/api/posts/:id', async (req, res) => {
   }
 });
 
-  //REPLIES //
+// REPLIES
+// Create a new reply for a post
+app.post('/api/posts/:postId/reply', async (req, res) => {
+  const postId = req.params.postId;
+  const userId = req.body.userId;
+
+  try {
+    const post = await Posts.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const user = await Users.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const reply = {
+      text: req.body.text,
+      userId: userId,
+    };
+
+    post.replies.push(reply);
+    await post.save();
+
+    res.status(201).json({ message: 'Reply added successfully', reply });
+  } catch (error) {
+    res.status(500).json({ message: 'Error adding reply' });
+  }
+});
+
+// Get replies for a given post along with user names
+app.get('/api/posts/:postId/replies', async (req, res) => {
+  const postId = req.params.postId;
+
+  try {
+    const post = await Posts.findById(postId).populate('replies.userId', 'firstName lastName');
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const repliesWithUserNames = post.replies.map(reply => ({
+      text: reply.text,
+      userName: `${reply.userId.firstName} ${reply.userId.lastName}`,
+    }));
+
+    res.json(repliesWithUserNames);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching replies' });
+  }
+});
 
 
 // Start the server and listen on the specified port
