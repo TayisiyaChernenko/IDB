@@ -21,19 +21,18 @@ export const Board = () => {
     const userId = location.state.id;
     const course = location.state.course;
     const section = location.state.section;
+    const props = {userId,course,section};
 
-    console.log({userId, course, section});
     return(
     <IDBLayout>
         <div>
-        <Nav></Nav>
-        <StyledMark><Mark/></StyledMark>
+        <Nav {...props}/>
+        <StyledMark></StyledMark>
         </div>
         <StyledBoard>
             <StyledTitle><h1>Intelligent Discussion Board</h1></StyledTitle>
-            <PrevPosts >
-            </PrevPosts>
-            <CreatePost/>
+            <PrevPosts {...props}/>
+            <CreatePost {...props}/>
         </StyledBoard>
     </IDBLayout> )
     }

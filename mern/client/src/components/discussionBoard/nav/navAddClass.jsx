@@ -2,10 +2,10 @@ import React, {useState} from 'react';
 import { StyledNavAddButton,StyledNavAddInput, StyledNavAddCourses } from '../../styles/styledIDB/styledNavs/styledNavAdd';
 import { useNavigate } from "react-router";
 
-export const NavAddClasses = () => {
+export const NavAddClasses = (props) => {
     const courseInput = useCourse();
     const sectionInput = useSection();
-    const userId = '643ec806b0c09a765b61875e';
+    const userId = props.userId;
     const navigate = useNavigate();
     const courseInfo = {
         userId: userId,

@@ -87,9 +87,17 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
-// Get all posts
+// Get all posts by course/section pair
+//        
+//              GET /api/posts?course=CS1337&section=001
+//
 app.get('/api/posts', async (req, res) => {
+  course=req.query.course;
+  section=req.query.section;
+  console.log(course)
+  console.log(section)
   try {
+
     const posts = await Posts.find({});
     res.json(posts);
   } catch (error) {
@@ -119,7 +127,7 @@ app.post('/api/courses', async (req, res) => {
 });
 
 // Create a new post
-app.post('/api/posts', async (req, res) => {
+app.post('/api/discussion/post', async (req, res) => {
   const userId = req.body.userId;
 
   try {
@@ -145,7 +153,7 @@ app.post('/api/posts', async (req, res) => {
     const createdPost = await newPost.save();
 
     // Update the user's posts array with the new post's ID
-    user.postIds.push(createdPost._id);
+    user.postIDs.push(createdPost._id);
     await user.save();
 
     res.status(201).json(createdPost);

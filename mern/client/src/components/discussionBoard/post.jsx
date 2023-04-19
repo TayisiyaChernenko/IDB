@@ -3,37 +3,16 @@ import { StyledExistingPost,StyledPostDate,StyledPostName,StyledPostText, Styled
 
 //This is the file for posts that are already in the database stytem
 
-export const Post = ({id}) => {
+export const Post = (props) => {
     
     // usestate for setting a javascript
     // object for storing and using data
-    const [postData, setPostData] = useState({
-        firstName: "",
-        lastName: "",
-        date: "",
-        time: "",
-        text: "",
-        replies: [],
-    });
-  
-    // Using useEffect for single rendering
+    const [postData, setPostData] = useState({});
+
+    // Using useEffect for single rendering of fetched post data (fetched in prevPostscomponent)
     useEffect(() => {
-        // Using fetch to fetch the api from 
-        // flask server it will be redirected to proxy
-        fetch('http://localhost:5000/api/posts').then((res) =>
-            res.json().then((postData) => {
-                // Setting a data from api
-                setPostData({
-                    firstName: postData.firstName,
-                    lastName: postData.lastName,
-                    date: postData.date,
-                    time: postData.time,
-                    text: postData.text,
-                    replies: postData.replies
-                }).catch(error => console.log(error));
-            })
-        );
     }, []);
+    
 
    return(
    <StyledExistingPost>
@@ -45,5 +24,3 @@ export const Post = ({id}) => {
    )
 }
 
-// should be able to connect to database to get a post in this file 
-//and place the text content in the StyledPostText component to render

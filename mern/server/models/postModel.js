@@ -10,7 +10,7 @@ const discussionSchema = new Schema({
   
 const PostsSchema = new Schema({
   text: String,
-  belongsToDiscission : [discussionSchema],
+  belongsToDiscission : discussionSchema,
   //datePosted: Date,
   replies:  [ObjectId] //postIDs
 });

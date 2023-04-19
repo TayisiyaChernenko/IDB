@@ -1,57 +1,82 @@
 import React from "react";
-import { StyledBox, StyledCharCount, StyledInputBox} from "../styles/styledIDB/styledCreatePost";
+import { StyledBox, StyledCharCount, StyledInputBox, StyledPostButton} from "../styles/styledIDB/styledCreatePost";
 import { useState } from "react";
 
 //This is the file for the user to create a post
 
-export const CreatePost = () => {
-    const pInput = useInput();
-    const charInput = useCharInput();
+export const CreatePost = (props) => {
+    const postInput = useInput();
+
+    const userId = props.userId;
+    const course = props.course;
+    const section = props.section;
+    
+    const postInfo = {
+        userId: userId,
+        text: postInput.postInput,
+        courseName : course,
+        sectionNum: section,
+    };
+
+    const handleAddPost = () => {
+        fetch("http://localhost:3000/api/discussion/post" ,{
+            method: 'post',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(postInfo),
+            }).then((response) => {
+           
+            })
+        }
 
     return(
     <div>
         <StyledBox>
         <StyledInputBox
-        {...pInput} 
-        {...charInput}
+        {...postInput} 
         maxLength={400}
         rows = {3}
         placeholder = "Your question ... " 
         >
         </StyledInputBox>
-        <StyledCharCount>Char Count {charInput.charCount}/400</StyledCharCount>
+        <StyledCharCount>Char Count {postInput.charCount}/400</StyledCharCount>
+        <StyledPostButton onClick={handleAddPost}>Post</StyledPostButton>
         </StyledBox>
+        
     </div>
     );
 }
 
-//Will take input
+//Will take input and word count
+
 
 const useInput = () => {
-    const [postInput, setInput] = useState('');
-    
-    function onChange(e) {
-        setInput(e.target.value);
-      }
+    const [postInput,setPostInput] = useState('');
+    const [charCount,setCharCount] = useState(0);
 
+    function onChange(e) {
+        setPostInput(e.target.value);
+        setCharCount(e.target.value.length);
+    }
     return{
         postInput,
-        onChange,
-    };
-};
-//word count
+        charCount,
+        onChange
+    }
+}
 
-const useCharInput = () => {
-    const [charCount, setCharCount] = useState(0);
-    
+const useCharCount = (text) => {
+    const [charCount,setCharCount] = useState(0);
     function onChange(e) {
         setCharCount(e.target.value.length);
     }
     return{
         charCount,
-        onChange,
-    };
-};
+        onChange
+    }
+}
 //Functionality to create : 
 // route to the next page, where the AI will respond 
 // if user chooses to post their question after AI responds,
