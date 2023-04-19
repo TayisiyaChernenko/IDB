@@ -2,18 +2,14 @@ import styled from "styled-components"
 
 
 export const StyledOpenNav = styled.div `
-#nav {
-  display: none;
-}
 
-#nav.open {
 
   display: inline-block;
-}
   height: 75vh;
   width: 12vw;
   display: flex;
   flex-direction:column;
+  align-items:center;
   justify-items: center;
   position: relative;
   border-radius: 5px;
@@ -25,6 +21,7 @@ export const StyledOpenNav = styled.div `
   li{
     list-style-type: none;
     margin: 1rem 1rem;
+    color: white;
   }
   ul{
     display: flex;
@@ -37,14 +34,11 @@ export const StyledOpenNav = styled.div `
   text-decoration: none;
   display: block;
   width: 100%;
-
-}
-link {
   color: white;
+
 }
 `
 export const StyledNavTitle = styled.nav`
-margin-left:5px;
 margin-top:5px;
 `
  

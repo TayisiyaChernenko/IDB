@@ -29,9 +29,10 @@ export const LogIn = () => {
             body: JSON.stringify(loginInfo),
             }).then((response) => {
             if (response.statusText === "OK"){
-                const id = response.json();
-                setUserId(id);
-                navigate('/users/', {state:{id:userId}});
+                response.json().then(id => {
+                    setUserId(id);
+                    navigate('/users/', {state:{id:id}});
+                });
             } else {
                 alert ('Incorrect Login Credentials');
             }

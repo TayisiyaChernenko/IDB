@@ -24,6 +24,8 @@ app.use(cors());
 mongoose.connect(Db);
 // Secret key for JWT
 const SECRET_KEY = 'mysecretkey';
+              
+              //AUTH/ REGISTER//
 
 // API endpoint for user authentication
 app.post('/auth/login', async (req, res) => {
@@ -32,7 +34,6 @@ app.post('/auth/login', async (req, res) => {
     const user = await Users.findOne({ email:email, password:password });
     if (user) {
       //const token = jwt.sign({ userId: user._id }, SECRET_KEY);
-      console.log(user._id);
       res.json(user._id);
     } else {
       res.status(401).json({ message: 'Invalid username or password' });
@@ -60,40 +61,17 @@ app.post('/discussions/register', async (req, res) => {
   }
 });
 
+       // CLASS / SECTION //
 
 // API Endpoint for fetching all of a user's class/section pairs
-app.get(`/discussion/courses/:id`, async (req, res) => {
-  const id = req.params.id;
+app.get(`/discussion/courses`, async (req, res) => {
+  const id = req.query.id;
   try {
   const user = await Users.findById(id);
-  console.log(user);
   const enrolledIn = user.enrolledIn;
-  console.log(enrolledIn);
   res.json(enrolledIn);
   } catch(error){
     res.status(500).json({ message: 'Error fetching discussions' });
-  }
-});
-
-
-//Get all users
-app.get('/api/users', async (req, res) => {
-  try {
-    const users = await Users.find({});
-    console.log(users);
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching users' });
-  }
-});
-
-// Get all posts
-app.get('/api/posts', async (req, res) => {
-  try {
-    const posts = await Posts.find({});
-    res.json(posts);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching posts' });
   }
 });
 
@@ -118,8 +96,22 @@ app.post('/api/courses', async (req, res) => {
   }
 });
 
+    //POSTS//
+
+    // Get all posts by course/section pair
+app.get('/api/posts', async (req, res) => {
+  const course=req.query.course;
+  const section=req.query.section;
+  try {
+    const posts = await Posts.find({ 'belongsToDiscission.course' :course, 'belongsToDiscission.section' : section});
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching posts' });
+  }
+});
+
 // Create a new post
-app.post('/api/posts', async (req, res) => {
+app.post('/api/discussion/post', async (req, res) => {
   const userId = req.body.userId;
 
   try {
@@ -145,7 +137,7 @@ app.post('/api/posts', async (req, res) => {
     const createdPost = await newPost.save();
 
     // Update the user's posts array with the new post's ID
-    user.postIds.push(createdPost._id);
+    user.postIDs.push(createdPost._id);
     await user.save();
 
     res.status(201).json(createdPost);
@@ -202,6 +194,22 @@ app.delete('/api/posts/:id', async (req, res) => {
     res.status(500).json({ message: 'Error deleting post' });
   }
 });
+
+ // Get user by postid
+ app.get('/api/user', async (req, res) => {
+  const postId=req.query.id;
+  try {
+    const user = await Users.find({postIDs: postId});
+    const name = [user.firstName, user.lastName];
+    console.log(name);
+    res.json(name);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching user' });
+  }
+});
+
+  //REPLIES //
+
 
 // Start the server and listen on the specified port
 app.listen(PORT, () => {

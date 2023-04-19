@@ -10,11 +10,12 @@ export const Welcome = () => {
     const location = useLocation();
     const userId = location.state.id;
     console.log(userId);
+    const props = {userId};
 
     return(
     
     <IDBLayout>
-        <Nav></Nav>
+        <Nav {...props}/>
         <StyledBoard>
             <StyledTitle><h1>Intellegent Discussion Board</h1></StyledTitle>
             <h2>Select a class to see what people are posting!</h2>
