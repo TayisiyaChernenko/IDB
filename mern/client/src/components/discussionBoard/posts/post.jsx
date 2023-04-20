@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from "react"
-import { StyledDetails, StyledExistingPost,StyledPostDate,StyledPostName,StyledPostText, StyledRepliesButton} from "../styles/styledIDB/styledExistingPost"
+import { StyledDetails, StyledExistingPost,StyledPostDate,StyledPostName,StyledPostText, StyledRepliesButton} from "../../styles/styledIDB/styledExistingPost"
 
 //This is the file for posts that are already in the database stytem
 

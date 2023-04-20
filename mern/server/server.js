@@ -109,6 +109,21 @@ app.get('/api/posts', async (req, res) => {
     res.status(500).json({ message: 'Error fetching posts' });
   }
 });
+  
+// Get all posts by userId
+app.get('/api/user/posts', async (req, res) => {
+  const userId=req.query.id;
+  try {
+    const user = await Users.findById(userId);
+    const postIds = user.postIDs;
+    console.log(postIds);
+    const posts = await Posts.find({ _id : {$in : postIds}});
+      console.log(posts);
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching posts' });
+  }
+});
 
 // Create a new post
 app.post('/api/discussion/post', async (req, res) => {

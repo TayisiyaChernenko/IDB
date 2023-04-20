@@ -6,8 +6,8 @@ import {useLocation} from 'react-router-dom';
 
 
 
-import { PrevPosts } from "./prevPosts";
-import { CreatePost } from "./createPost";
+import { PrevPosts } from "./posts/prevPosts";
+import { CreatePost } from "./posts/createPost";
 import { Mark } from "../design";
 import { StyledMark } from "../styles/styledDesign";
 
@@ -26,7 +26,7 @@ export const Board = () => {
     return(
     <IDBLayout>
         <div>
-        <Nav {...props}/>
+        <Nav {...{userId}}/>
         <StyledMark><Mark/></StyledMark>
         </div>
         <StyledBoard>

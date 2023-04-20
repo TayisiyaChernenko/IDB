@@ -1,5 +1,5 @@
 import React from "react";
-import { StyledBox, StyledCharCount, StyledInputBox, StyledPostButton} from "../styles/styledIDB/styledCreatePost";
+import { StyledBox, StyledCharCount, StyledInputBox, StyledPostButton} from "../../styles/styledIDB/styledCreatePost";
 import { useState } from "react";
 
 //This is the file for the user to create a post

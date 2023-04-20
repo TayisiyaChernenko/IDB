@@ -1,4 +1,9 @@
 The Discussion Board FE is composed of several components inside each other.
+
+The Layout wrapper formats the page stylistically, to organize the main components of the page - the Navigation and Board
+
+Nav
+The Nav component allows a user to traverse their course boards, see their unique posting history, and add classes to their nav 
 Board 
 The Board component is what brings it all together, and it consists of
 both a prevPost component and a yourPost component
@@ -14,7 +19,7 @@ The response component consists of text information, user info (name) and a repl
 open up and display the replies this post has recieved. As such, it should be able to pull
 related replied from the database to display.
 
-YourPost
-The YourPost component is where the user can create a post. As such, it takes user input in
+CreatePost
+The CreatePost component is where the user can create a post. As such, it takes user input in
 the form of text. 
  

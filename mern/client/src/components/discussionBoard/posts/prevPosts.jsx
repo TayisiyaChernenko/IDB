@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from "react";
-import { StyledPrevPosts} from "../styles/styledIDB/styledIDBHome";
-import { StyledCourseName } from "../styles/styledIDB/styledExistingPost";
+import { StyledPrevPosts} from "../../styles/styledIDB/styledIDBHome";
+import { StyledCourseName } from "../../styles/styledIDB/styledExistingPost";
 import { Post } from "./post";
 
 

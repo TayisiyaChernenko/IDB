@@ -11,6 +11,7 @@ import ErrorPage from "./components/errorpage";
 import { Board } from "./components/discussionBoard/board";
 import { Welcome } from "./components/discussionBoard/welcome";
 import { TestPage } from "./components/testPg";
+import { YourPosts } from "./components/yourHist/yourPosts";
 
 
 const router = createBrowserRouter([
@@ -32,6 +33,11 @@ const router = createBrowserRouter([
   {
     path: "/users/board",
     element : <Board/>,
+    errorElement: <ErrorPage />,
+  },
+  {
+    path: "/users/history",
+    element : <YourPosts/>,
     errorElement: <ErrorPage />,
   },
   {
