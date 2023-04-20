@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from "react"
-import { StyledDetails, StyledExistingPost,StyledPostDate,StyledPostName,StyledPostText, StyledRepliesButton} from "../../styles/styledIDB/styledExistingPost"
+import { StyledDetails, StyledExistingPost,StyledPostDate,StyledPostName,StyledPostText, StyledButton} from "../../styles/styledIDB/styledExistingPost"
 
 //This is the file for posts that are already in the database stytem
 
@@ -14,11 +14,22 @@ export const Post = (props) => {
     useEffect(() => {
         fetch('http://localhost:3000/api/user?id=' + id,{method: 'get'})
         .then(response => {return response.json()})
-        .then(data => {setName(data)}).then(console.log(name));
+        .then(data => {setName(data)});
     }, [])
 
     const url = '';
-    const handleClick = () => {
+    const handleReplies = () => {
+        //will fetch the replies to this specific post 
+        fetch(url,{method: 'get'})
+        .then(response => {return response.json()})
+        .then(data => {setReplies(data)})
+    }
+    const handleDelete = () => {
+        console.log("Delete dis post");
+        const url = 'http://localhost:3000/api/posts?id=' + id + "&userId=" + userId;
+        fetch(url,{method: 'delete'});
+    }
+    const handleUpdate = () => {
         //will fetch the replies to this specific post 
         fetch(url,{method: 'get'})
         .then(response => {return response.json()})
@@ -33,13 +44,13 @@ export const Post = (props) => {
         {(function() {
           if (userId === name._id) {
             return <StyledDetails>
-                <StyledRepliesButton>Update</StyledRepliesButton>
-                <StyledRepliesButton>Delete</StyledRepliesButton>
+                <StyledButton onClick={handleUpdate}>Update</StyledButton>
+                <StyledButton onClick={handleDelete}>Delete</StyledButton>
             </StyledDetails>
           }
         })()}
         <StyledPostDate>Posted {props.post.time} on {props.post.date}</StyledPostDate>
-        <StyledRepliesButton>Replies</StyledRepliesButton>
+        <StyledButton>Replies</StyledButton>
         </StyledDetails>
     </StyledExistingPost>
    )

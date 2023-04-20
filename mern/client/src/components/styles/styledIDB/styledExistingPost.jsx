@@ -23,7 +23,7 @@ margin-top: 10px ;
 margin-left: 20px;
 `;
 
-export const StyledRepliesButton = styled.button `
+export const StyledButton = styled.button `
     color : rgb(5, 60, 10);
     font-family : sans-serif;
     border:0;
