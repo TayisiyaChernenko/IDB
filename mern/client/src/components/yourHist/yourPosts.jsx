@@ -33,7 +33,7 @@ export const YourPosts = () => {
                 <StyledCourseName><h2>Your Posts</h2></StyledCourseName>
                 <ul>
                 {myPosts.map(post => (<li key={post._id}>
-                    <Post {...post}/>
+                    <Post {...{post,userId}}/>
                 </li>))}
                 </ul>    
             </StyledMyPrevPosts>

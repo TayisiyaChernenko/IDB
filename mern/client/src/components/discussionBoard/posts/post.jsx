@@ -6,7 +6,7 @@ import { StyledDetails, StyledExistingPost,StyledPostDate,StyledPostName,StyledP
 export const Post = (props) => {
     const [replies, setReplies] = useState([]);
     const [name, setName] = useState({});
-    const id = props._id;
+    const id = props.post._id;
 
 
     useEffect(() => {
@@ -26,9 +26,9 @@ export const Post = (props) => {
     return(
    <StyledExistingPost>
         <StyledPostName> {name.firstName} {name.lastName}  </StyledPostName>
-        <StyledPostText> {props.text}</StyledPostText>
+        <StyledPostText> {props.post.text}</StyledPostText>
         <StyledDetails>
-        <StyledPostDate>Posted {props.time} on {props.date}</StyledPostDate>
+        <StyledPostDate>Posted {props.post.time} on {props.post.date}</StyledPostDate>
         <StyledRepliesButton>Replies</StyledRepliesButton>
         </StyledDetails>
     </StyledExistingPost>

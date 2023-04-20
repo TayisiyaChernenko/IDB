@@ -8,6 +8,7 @@ export const PrevPosts = (props) => {
     //will have to take all posts and somehow pass the ID as props to post to render each post for the course 
     const course = props.course;
     const section = props.section;
+    const userId = props.userId;
     const [posts, setPosts] = useState([]);
 
     const url = "http://localhost:3000/api/posts?course=" + course + "&section=" + section;
@@ -24,7 +25,7 @@ export const PrevPosts = (props) => {
     <StyledPrevPosts >
        <StyledCourseName><h3>{course} {section}</h3> </StyledCourseName>
        <ul>
-           {posts.map(post => (<li key={post._id}><Post {...post}/></li>))}
+           {posts.map(post => (<li key={post._id}><Post {...{post,userId}}/></li>))}
        </ul>
      </StyledPrevPosts>
     );
