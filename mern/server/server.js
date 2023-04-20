@@ -116,9 +116,7 @@ app.get('/api/user/posts', async (req, res) => {
   try {
     const user = await Users.findById(userId);
     const postIds = user.postIDs;
-    console.log(postIds);
     const posts = await Posts.find({ _id : {$in : postIds}});
-      console.log(posts);
     res.json(posts);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching posts' });
@@ -210,14 +208,13 @@ app.delete('/api/posts/:id', async (req, res) => {
   }
 });
 
- // Get user by postid
+ // Get user name by postid
  app.get('/api/user', async (req, res) => {
   const postId=req.query.id;
   try {
-    const user = await Users.find({postIDs: postId});
-    const name = [user.firstName, user.lastName];
-    console.log(name);
-    res.json(name);
+    const user = await Users.find({postIDs: postId}, {firstName :1 , lastName : 1});
+    console.log(user[0]);
+    res.json(user[0]);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching user' });
   }

@@ -5,14 +5,14 @@ import { StyledDetails, StyledExistingPost,StyledPostDate,StyledPostName,StyledP
 
 export const Post = (props) => {
     const [replies, setReplies] = useState([]);
-    const [name, setName] = useState([]);
+    const [name, setName] = useState({});
     const id = props._id;
 
 
     useEffect(() => {
         fetch('http://localhost:3000/api/user?id=' + id,{method: 'get'})
         .then(response => {return response.json()})
-        .then(data => {setName(data)})
+        .then(data => {setName(data)}).then(console.log(name));
     }, [])
 
     const url = '';
@@ -25,7 +25,7 @@ export const Post = (props) => {
 
     return(
    <StyledExistingPost>
-        <StyledPostName> {name[0]} {name[1]}  </StyledPostName>
+        <StyledPostName> {name.firstName} {name.lastName}  </StyledPostName>
         <StyledPostText> {props.text}</StyledPostText>
         <StyledDetails>
         <StyledPostDate>Posted {props.time} on {props.date}</StyledPostDate>
