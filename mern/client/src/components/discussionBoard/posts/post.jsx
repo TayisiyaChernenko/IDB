@@ -7,6 +7,8 @@ export const Post = (props) => {
     const [replies, setReplies] = useState([]);
     const [name, setName] = useState({});
     const id = props.post._id;
+    const userId = props.userId;
+
 
 
     useEffect(() => {
@@ -28,6 +30,14 @@ export const Post = (props) => {
         <StyledPostName> {name.firstName} {name.lastName}  </StyledPostName>
         <StyledPostText> {props.post.text}</StyledPostText>
         <StyledDetails>
+        {(function() {
+          if (userId === name._id) {
+            return <StyledDetails>
+                <StyledRepliesButton>Update</StyledRepliesButton>
+                <StyledRepliesButton>Delete</StyledRepliesButton>
+            </StyledDetails>
+          }
+        })()}
         <StyledPostDate>Posted {props.post.time} on {props.post.date}</StyledPostDate>
         <StyledRepliesButton>Replies</StyledRepliesButton>
         </StyledDetails>
