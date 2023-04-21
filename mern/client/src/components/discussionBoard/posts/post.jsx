@@ -5,6 +5,7 @@ import { StyledDetails, StyledExistingPost,StyledPostDate,StyledPostName,StyledP
 
 export const Post = (props) => {
     const [replies, setReplies] = useState([]);
+    const [post,setPost] = useState([]);
     const [name, setName] = useState({});
     const id = props.post._id;
     const userId = props.userId;
@@ -24,10 +25,16 @@ export const Post = (props) => {
         .then(response => {return response.json()})
         .then(data => {setReplies(data)})
     }
+
+
     const handleDelete = () => {
-        console.log("Delete dis post");
         const url = 'http://localhost:3000/api/posts?id=' + id + "&userId=" + userId;
+         fetch('http://localhost:3000/api/post?id=' + id,{method: 'get'})
+        .then(response => {return response.json()})
+        .then(data => {setPost(data)});
+        console.log(post);
         fetch(url,{method: 'delete'});
+        props.setPosts(prev => prev.filter(posts => posts !== post ));
     }
     const handleUpdate = () => {
         //will fetch the replies to this specific post 

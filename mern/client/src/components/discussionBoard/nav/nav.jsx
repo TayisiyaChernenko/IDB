@@ -24,7 +24,7 @@ export const Nav = (props) => {
                 ))}
             </ul>
             <Link to="/users/history" state={{id:userId}} >Your Posts</Link>
-            <NavAddClasses {...props}/>
+            <NavAddClasses {...{props, discussionBoards,setDiscussionBoards}}/>
             </StyledOpenNav>
         </div>
     )

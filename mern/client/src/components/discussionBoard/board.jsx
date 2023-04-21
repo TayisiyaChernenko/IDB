@@ -1,4 +1,4 @@
-import React from "react";
+import React , {useState,useEffect}from "react";
 import { IDBLayout, StyledBoard } from "../styles/styledIDB/styledIDBHome";
 import { StyledTitle } from "../styles/authStyles/styledLogin";
 import { Nav } from "./nav/nav";
@@ -21,12 +21,14 @@ export const Board = () => {
     const userId = location.state.id;
     const course = location.state.course;
     const section = location.state.section;
-    const props = {userId,course,section};
+    const [posts, setPosts] = useState([]);
+
+    const props = {userId,course,section, posts,setPosts};
 
     return(
     <IDBLayout>
         <div>
-        <Nav {...{userId}}/>
+        <Nav {...{userId,setPosts}}/>
         <StyledMark><Mark/></StyledMark>
         </div>
         <StyledBoard>

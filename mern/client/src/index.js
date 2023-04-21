@@ -11,7 +11,7 @@ import ErrorPage from "./components/errorpage";
 import { Board } from "./components/discussionBoard/board";
 import { Welcome } from "./components/discussionBoard/welcome";
 import { TestPage } from "./components/testPg";
-import { YourPosts } from "./components/yourHist/yourPosts";
+import { YourPosts} from "./components/discussionBoard/yourPosts"
 
 
 const router = createBrowserRouter([

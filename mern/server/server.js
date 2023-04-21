@@ -90,6 +90,7 @@ app.post('/api/courses', async (req, res) => {
     // Update the user's enrolledIn array with the new course/section
     user.enrolledIn.push({course: course , section: section});
     await user.save();
+    res.json({course: course , section: section});
   } catch (error) {
     console.log("Class Not Added")
     res.status(500).json({ message: 'Error adding class' });
@@ -120,6 +121,18 @@ app.get('/api/user/posts', async (req, res) => {
     res.json(posts);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching posts' });
+  }
+});
+
+// Get post by postId
+app.get('/api/post', async (req, res) => {
+  const postId=req.query.id;
+  try {
+    const post = await Posts.findById(postId);
+    console.log(post);
+    res.json(post);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching post' });
   }
 });
 

@@ -1,11 +1,11 @@
 import React,{useState, useEffect} from "react"
 import {useLocation} from 'react-router-dom';
-import { Nav } from "../discussionBoard/nav/nav";
-import { StyledMark } from "../styles/styledDesign";
+import { Nav } from "./nav/nav";
+import { StyledMark} from "../styles/styledDesign"
 import { Mark } from "../design";
 import {StyledIDBLayout, StyledPostDisplay, StyledMyPrevPosts,StyledCourseName } from "../styles/history/styledHistory";
 import { StyledTitle } from "../styles/authStyles/styledLogin";
-import {Post} from "../discussionBoard/posts/post"
+import {Post} from "./posts/post"
 
 export const YourPosts = () => {
     const location = useLocation();

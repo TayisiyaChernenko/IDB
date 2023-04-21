@@ -12,6 +12,7 @@ export const StyledPrevPosts = styled.div`
     margin-right: 5%;
     background-color: #d3d3d3;
     box-shadow: 2px 2px 2px 1px rgba(5, 60, 10, 0.8);
+    overflow-y: scroll;
     li{
     list-style-type: none;
     margin-bottom: 2px;

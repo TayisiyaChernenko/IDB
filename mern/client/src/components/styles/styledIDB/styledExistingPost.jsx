@@ -21,6 +21,7 @@ width: 60vw;
 height: 8vh; 
 margin-top: 10px ;
 margin-left: 20px;
+overflow-y: scroll;
 `;
 
 export const StyledButton = styled.button `

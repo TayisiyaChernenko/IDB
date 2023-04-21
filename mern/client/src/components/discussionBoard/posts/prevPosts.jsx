@@ -9,23 +9,20 @@ export const PrevPosts = (props) => {
     const course = props.course;
     const section = props.section;
     const userId = props.userId;
-    const [posts, setPosts] = useState([]);
 
     const url = "http://localhost:3000/api/posts?course=" + course + "&section=" + section;
 
     useEffect(() => {
       fetch(url,{method: 'get'})
       .then(response => {return response.json()})
-      .then(data => {setPosts(data)})
-      console.log("In the previous posts section");
-      console.log(posts);
+      .then(data => {props.setPosts(data)});
   }, [])
 
   return (
     <StyledPrevPosts >
        <StyledCourseName><h3>{course} {section}</h3> </StyledCourseName>
        <ul>
-           {posts.map(post => (<li key={post._id}><Post {...{post,userId}}/></li>))}
+           {props.posts.map(post => (<li key={post._id}><Post {...{post,userId}}/></li>))}
        </ul>
      </StyledPrevPosts>
     );

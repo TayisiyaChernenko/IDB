@@ -25,10 +25,9 @@ export const CreatePost = (props) => {
                 'Accept': 'application/json, text/plain, */*',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(postInfo),
-            }).then((response) => {
-           
-            })
+            body: JSON.stringify(postInfo)
+            }).then(response => {return response.json()})
+            .then(data => {props.setPosts([...props.posts,data])});
         }
 
     return(

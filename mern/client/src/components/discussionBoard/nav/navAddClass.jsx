@@ -5,7 +5,7 @@ import { useNavigate } from "react-router";
 export const NavAddClasses = (props) => {
     const courseInput = useCourse();
     const sectionInput = useSection();
-    const userId = props.userId;
+    const userId = props.props.userId;
     const navigate = useNavigate();
     const courseInfo = {
         userId: userId,
@@ -22,12 +22,9 @@ export const NavAddClasses = (props) => {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(courseInfo),
-            }).then((response) => {
-            if (response.statusText === "OK"){
-            } else {
-                alert ('Could not add class');
-            }
-        })
+            }).then(response => {return response.json()})
+            .then(data => {props.setDiscussionBoards([...props.discussionBoards,data])});
+            console.log(props.discussionBoards);
     }
     
     
