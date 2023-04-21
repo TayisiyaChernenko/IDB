@@ -11,8 +11,6 @@ export const StyledInputBox = styled.input `
     height: 8vh;
     background-color: #EEEEEE;
     border:0;
-   
-    
 `
 export const StyledBox = styled.text `
     display: flex;

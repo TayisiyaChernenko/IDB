@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const StyledPrevPosts = styled.div`
+export const StyledMyPrevPosts = styled.div`
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -8,7 +8,7 @@ export const StyledPrevPosts = styled.div`
     border: 1px solid black;
     border-radius: 25px;
     width: 75vw;
-    height: 75vh;
+    height: 85vh;
     margin-right: 5%;
     background-color: #d3d3d3;
     box-shadow: 2px 2px 2px 1px rgba(5, 60, 10, 0.8);
@@ -31,8 +31,7 @@ export const StyledPrevPosts = styled.div`
 
 `;
 
-
-export const StyledBoard= styled.div `
+export const StyledPostDisplay= styled.div `
     display:flex;
     flex-direction:column;
     align-items: center;
@@ -41,9 +40,12 @@ export const StyledBoard= styled.div `
     padding-left: 4vw;
     `;
 
-export const IDBLayout= styled.div `
+export const StyledIDBLayout= styled.div `
 display:flex;
 flex-direction:row;
 width: 100vw;
 height: 100vh;
+`
+export const StyledCourseName= styled.div`
+    align-self:center;
 `

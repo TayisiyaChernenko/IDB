@@ -54,3 +54,13 @@ export const StyledClosedNav = styled.button `
     color: white;
     margin-right: auto;
 `
+export const StyledPostHistory = styled.link`
+  li a {
+  // increases the surface area of the anchor tag to span more than just the anchor text
+  text-decoration: none;
+  display: block;
+  width: 100%;
+  color: white;
+
+}
+`

@@ -1,5 +1,5 @@
 import React from "react";
-import { StyledBox, StyledCharCount, StyledInputBox, StyledPostButton} from "../styles/styledIDB/styledCreatePost";
+import { StyledBox, StyledCharCount, StyledInputBox, StyledPostButton} from "../../styles/styledIDB/styledCreatePost";
 import { useState } from "react";
 
 //This is the file for the user to create a post
@@ -25,10 +25,9 @@ export const CreatePost = (props) => {
                 'Accept': 'application/json, text/plain, */*',
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(postInfo),
-            }).then((response) => {
-           
-            })
+            body: JSON.stringify(postInfo)
+            }).then(response => {return response.json()})
+            .then(data => {props.setPosts([...props.posts,data])});
         }
 
     return(

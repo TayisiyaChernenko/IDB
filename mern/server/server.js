@@ -90,6 +90,7 @@ app.post('/api/courses', async (req, res) => {
     // Update the user's enrolledIn array with the new course/section
     user.enrolledIn.push({course: course , section: section});
     await user.save();
+    res.json({course: course , section: section});
   } catch (error) {
     console.log("Class Not Added")
     res.status(500).json({ message: 'Error adding class' });
@@ -107,6 +108,31 @@ app.get('/api/posts', async (req, res) => {
     res.json(posts);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching posts' });
+  }
+});
+  
+// Get all posts by userId
+app.get('/api/user/posts', async (req, res) => {
+  const userId=req.query.id;
+  try {
+    const user = await Users.findById(userId);
+    const postIds = user.postIDs;
+    const posts = await Posts.find({ _id : {$in : postIds}});
+    res.json(posts);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching posts' });
+  }
+});
+
+// Get post by postId
+app.get('/api/post', async (req, res) => {
+  const postId=req.query.id;
+  try {
+    const post = await Posts.findById(postId);
+    console.log(post);
+    res.json(post);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching post' });
   }
 });
 
@@ -147,7 +173,7 @@ app.post('/api/discussion/post', async (req, res) => {
 });
 
 // Update an existing post by ID
-app.put('/api/posts/:id', async (req, res) => {
+app.put('/api/posts/', async (req, res) => {
   const postId = req.params.id;
   const userId = req.body.userId;
 
@@ -170,21 +196,16 @@ app.put('/api/posts/:id', async (req, res) => {
 });
 
 // Delete a post by ID
-app.delete('/api/posts/:id', async (req, res) => {
-  const postId = req.params.id;
-  const userId = req.body.userId;
+app.delete('/api/posts', async (req, res) => {
+  const postId = req.query.id;
+  const userId = req.query.userId;
 
   try {
     const post = await Posts.findById(postId);
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
-
     const user = await Users.findById(userId);
-    if (!user || !user.postIds.includes(postId)) {
-      return res.status(403).json({ message: 'You are not allowed to delete this post' });
-    }
-
     await Posts.findByIdAndDelete(postId);
     user.postIds = user.postIds.filter(id => id.toString() !== postId);
     await user.save();
@@ -195,14 +216,12 @@ app.delete('/api/posts/:id', async (req, res) => {
   }
 });
 
- // Get user by postid
+ // Get user name by postid
  app.get('/api/user', async (req, res) => {
   const postId=req.query.id;
   try {
-    const user = await Users.find({postIDs: postId});
-    const name = [user.firstName, user.lastName];
-    console.log(name);
-    res.json(name);
+    const user = await Users.find({postIDs: postId}, {firstName :1 , lastName : 1});
+    res.json(user[0]);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching user' });
   }

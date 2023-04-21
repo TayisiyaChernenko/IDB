@@ -9,7 +9,6 @@ import {useLocation} from 'react-router-dom';
 export const Welcome = () => {
     const location = useLocation();
     const userId = location.state.id;
-    console.log(userId);
     const props = {userId};
 
     return(
