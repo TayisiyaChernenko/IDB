@@ -65,19 +65,3 @@ const useInput = () => {
         onChange
     }
 }
-
-const useCharCount = (text) => {
-    const [charCount,setCharCount] = useState(0);
-    function onChange(e) {
-        setCharCount(e.target.value.length);
-    }
-    return{
-        charCount,
-        onChange
-    }
-}
-//Functionality to create : 
-// route to the next page, where the AI will respond 
-// if user chooses to post their question after AI responds,
-// input is stored into the databse
-

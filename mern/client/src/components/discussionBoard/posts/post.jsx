@@ -1,14 +1,23 @@
-import React, {useState,useEffect} from "react"
+import React, {useState,useEffect} from "react";
 import { StyledDetails, StyledExistingPost,StyledPostDate,StyledPostName,StyledPostText, StyledButton} from "../../styles/styledIDB/styledExistingPost"
-
+import { StyledInputBox , StyledCharCount} from "../../styles/styledIDB/styledCreatePost";
+import { AddReply, Reply } from "./reply";
 //This is the file for posts that are already in the database stytem
 
 export const Post = (props) => {
-    const [replies, setReplies] = useState([]);
-    const [post,setPost] = useState([]);
-    const [name, setName] = useState({});
     const id = props.post._id;
     const userId = props.userId;
+    //states for getting things from API relevant to the page 
+    const [post,setPost] = useState([]);
+    const [name, setName] = useState({});
+    const [replies, setReplies] = useState([]);
+
+
+    
+    const postInput = useInput();
+    //show alternative views of the page (replies to a post or updatable post)
+    const [repliesOpen,setReplyStatus] = useState(false);
+    const [updating, setUpdating] = useState(false);
 
 
 
@@ -18,48 +27,114 @@ export const Post = (props) => {
         .then(data => {setName(data)});
     }, [])
 
-    const url = '';
+
     const handleReplies = () => {
+        //set the reply state to true so that replies are displayed 
+        setReplyStatus(true);
         //will fetch the replies to this specific post 
-        fetch(url,{method: 'get'})
+        fetch('/api/posts/' + id + '/replies',{method: 'get'})
         .then(response => {return response.json()})
         .then(data => {setReplies(data)})
     }
 
 
     const handleDelete = () => {
+        
         const url = 'http://localhost:3000/api/posts?id=' + id + "&userId=" + userId;
-         fetch('http://localhost:3000/api/post?id=' + id,{method: 'get'})
-        .then(response => {return response.json()})
-        .then(data => {setPost(data)});
-        console.log(post);
         fetch(url,{method: 'delete'});
-        props.setPosts(prev => prev.filter(posts => posts !== post ));
+        props.setPosts(prev => prev.filter(posts => posts !== props.post ));
     }
+    //Clicking edit on your post will change the updating state to true, and show you a different visual of a post in edit mode
+    const handleEdit = () => {
+        setUpdating(true);
+    }
+    //Clicking return will take you back to all posts w/o editting the post but changing the updating state to false again
+    const handleReturn = () => {
+        setUpdating(false);
+    }
+    //This actually calls the API and updates the post once the user is satisified with the edits and takes them back to the reguar posts
     const handleUpdate = () => {
-        //will fetch the replies to this specific post 
-        fetch(url,{method: 'get'})
-        .then(response => {return response.json()})
-        .then(data => {setReplies(data)})
+        console.log(postInput.postInput);
+    fetch('http://localhost:3000/api/posts?id='+ id +"&userId=" +userId,{method: 'put'},
+    {body: JSON.stringify(postInput.postInput)} )
+    .then(setUpdating(false));
     }
 
+
+    //component layout for page 
     return(
-   <StyledExistingPost>
-        <StyledPostName> {name.firstName} {name.lastName}  </StyledPostName>
-        <StyledPostText> {props.post.text}</StyledPostText>
-        <StyledDetails>
-        {(function() {
-          if (userId === name._id) {
-            return <StyledDetails>
-                <StyledButton onClick={handleUpdate}>Update</StyledButton>
-                <StyledButton onClick={handleDelete}>Delete</StyledButton>
+    <div>
+    {(function() {
+    if (updating === false) {
+    return (
+        <div>
+        <StyledExistingPost>
+            <StyledPostName> {name.firstName} {name.lastName}  </StyledPostName>
+            <StyledPostText> {props.post.text}</StyledPostText>
+            <StyledDetails>
+            {(function() {
+            if (userId === name._id) {
+                return (<StyledDetails>
+                    <StyledButton onClick={handleEdit}>Edit</StyledButton>
+                    <StyledButton onClick={handleDelete}>Delete</StyledButton>
+                </StyledDetails>
+                )
+             }
+            })()}
+            <StyledPostDate>Posted {props.post.time} on {props.post.date}</StyledPostDate>
+            <StyledButton onClick={handleReplies}>Replies</StyledButton>
             </StyledDetails>
-          }
-        })()}
-        <StyledPostDate>Posted {props.post.time} on {props.post.date}</StyledPostDate>
-        <StyledButton>Replies</StyledButton>
-        </StyledDetails>
-    </StyledExistingPost>
+        </StyledExistingPost>
+        {(function() {
+            if (repliesOpen === true) {
+                console.log("The replies are open!");
+                return (
+                    //Generate replies
+                    <div>
+                    <ul>
+                    {replies.map(reply => (<li key={reply._id}><Reply {...{reply,userId, id}}/></li>))}
+                    </ul>
+                     <AddReply {...{id, userId, replies, setReplies}}/>
+                     </div>
+                )
+             }
+            })()}
+        </div>
+        )
+        } else{
+        return(
+            <StyledExistingPost>
+            <StyledInputBox
+                {...postInput.postInput} 
+                maxLength={400} />
+        <StyledCharCount>Char Count {postInput.charCount}/400</StyledCharCount>
+            <StyledDetails>
+            <StyledButton onClick={handleUpdate}>Update Post</StyledButton>
+            <StyledButton onClick={handleReturn}>Return</StyledButton>
+            </StyledDetails>
+        </StyledExistingPost>
+        )
+
+    }
+   })()}
+
+    </div>
    )
 
+}
+//come back to this and see why it's not storing update 
+
+const useInput = () => {
+    const [postInput,setPostInput] = useState("");
+    const [charCount,setCharCount] = useState(0);
+
+    function onChange(e) {
+        setPostInput(e.target.value);
+        setCharCount(e.target.value.length);
+    }
+    return{
+        postInput,
+        charCount,
+        onChange
+    }
 }

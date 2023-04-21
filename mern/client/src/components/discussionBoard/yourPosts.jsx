@@ -13,12 +13,9 @@ export const YourPosts = () => {
     const [myPosts, setMyPosts] = useState([]);
     
     useEffect(() => {
-        console.log(userId)
         fetch('http://localhost:3000/api/user/posts?id=' + userId,{method: 'get'})
         .then(response => {return response.json()})
-        .then(data => {setMyPosts(data)}).then(
-        console.log("In the previous posts section")).then(
-        console.log(myPosts));
+        .then(data => {setMyPosts(data)});
     }, [])
 
     return(

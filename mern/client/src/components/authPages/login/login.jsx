@@ -47,7 +47,7 @@ export const LogIn = () => {
             <StyledTitle><h3>Sign In</h3></StyledTitle>
             <StyledAuthInput 
                 {...emailInput}
-                placeholder= "Username"  />
+                placeholder= "Email"  />
             <StyledAuthInput 
                 {...passwordInput}
                 placeholder= "Password" />
