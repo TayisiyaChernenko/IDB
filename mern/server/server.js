@@ -216,16 +216,30 @@ app.delete('/api/posts', async (req, res) => {
   }
 });
 
- // Get user name by postid
- app.get('/api/user', async (req, res) => {
+ // Get user first name by postid
+ app.get('/api/user/', async (req, res) => {
   const postId=req.query.id;
   try {
-    const user = await Users.find({postIDs: postId}, {firstName :1 , lastName : 1});
+    const user = await Users.find({postIDs: postId}, {firstName : 1 , lastName: 1});
+    console.log(user[0]);
     res.json(user[0]);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching user' });
+    res.status(500).json({ message: 'Error fetching user by postID' });
   }
 });
+
+ // Get user last name by postid
+ app.get('/api/user/last', async (req, res) => {
+  const postId=req.query.id;
+  try {
+    const user = await Users.find({postIDs: postId}, {lastName : 1});
+    console.log(user[0]);
+    res.json(user[0]);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching user by postID' });
+  }
+});
+
 
 // REPLIES
 // Create a new reply for a post
