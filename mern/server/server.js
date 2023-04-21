@@ -129,7 +129,6 @@ app.get('/api/post', async (req, res) => {
   const postId=req.query.id;
   try {
     const post = await Posts.findById(postId);
-    console.log(post);
     res.json(post);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching post' });
@@ -172,10 +171,11 @@ app.post('/api/discussion/post', async (req, res) => {
   }
 });
 
+
 // Update an existing post by ID
 app.put('/api/posts/', async (req, res) => {
-  const postId = req.params.id;
-  const userId = req.body.userId;
+  const postId = req.query.id;
+  const userId = req.query.userId;
 
   try {
     const post = await Posts.findById(postId);
@@ -184,12 +184,11 @@ app.put('/api/posts/', async (req, res) => {
     }
 
     const user = await Users.findById(userId);
-    if (!user || !user.postIds.includes(postId)) {
-      return res.status(403).json({ message: 'You are not allowed to update this post' });
-    }
 
     const updatedPost = await Posts.findByIdAndUpdate(postId, req.body, { new: true });
-    res.json({ message: 'Post updated successfully', updatedPost });
+    console.log("The updated post is ");
+    console.log(updatedPost);
+    res.json(updatedPost);
   } catch (error) {
     res.status(500).json({ message: 'Error updating post' });
   }
@@ -207,7 +206,7 @@ app.delete('/api/posts', async (req, res) => {
     }
     const user = await Users.findById(userId);
     await Posts.findByIdAndDelete(postId);
-    user.postIds = user.postIds.filter(id => id.toString() !== postId);
+    user.postIds = user.postIDs.filter(id => id.toString() !== postId);
     await user.save();
 
     res.json({ message: 'Post deleted successfully' });
@@ -216,24 +215,11 @@ app.delete('/api/posts', async (req, res) => {
   }
 });
 
- // Get user first name by postid
+ // Get user name by postid
  app.get('/api/user/', async (req, res) => {
   const postId=req.query.id;
   try {
     const user = await Users.find({postIDs: postId}, {firstName : 1 , lastName: 1});
-    console.log(user[0]);
-    res.json(user[0]);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching user by postID' });
-  }
-});
-
- // Get user last name by postid
- app.get('/api/user/last', async (req, res) => {
-  const postId=req.query.id;
-  try {
-    const user = await Users.find({postIDs: postId}, {lastName : 1});
-    console.log(user[0]);
     res.json(user[0]);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching user by postID' });
@@ -258,11 +244,8 @@ app.post('/api/posts/:postId/reply', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const reply = {
-      text: req.body.text,
-      userId: userId,
-    };
-
+    post.replies.push({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName, user: userId});
+    await user.save();
     post.replies.push(reply);
     await post.save();
 
@@ -281,18 +264,31 @@ app.get('/api/posts/:postId/replies', async (req, res) => {
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
-
-    const repliesWithUserNames = post.replies.map(reply => ({
-      text: reply.text,
-      userName: `${reply.userId.firstName} ${reply.userId.lastName}`,
-    }));
-
-    res.json(repliesWithUserNames);
+    const replies = post.replies;
+    res.json(replies);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching replies' });
   }
 });
 
+// Delete a reply by reply ID
+app.delete('/api/posts/:postId/replies', async (req, res) => {
+  const replyId = req.query.id;
+  const postId = req.params.postId;
+
+  try {
+    const reply = await Posts.update({_id : postId},  ... {$pull : { "replies" : {"_id":replyId} } } )
+    WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 } );
+    if (!reply) {
+      return res.status(404).json({ message: 'Reply not found' });
+    }
+    await post.save();
+
+    res.json({ message: 'Reply deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting reply' });
+  }
+});
 
 // Start the server and listen on the specified port
 app.listen(PORT, () => {
