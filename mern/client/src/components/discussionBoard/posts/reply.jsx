@@ -41,7 +41,7 @@ export const Reply = (props) => {
     return(
     <StyledExistingPost>
     <StyledPostName> {props.reply.firstName} {props.reply.lastName}  </StyledPostName>
-    <StyledPostText> {props.reply.text}</StyledPostText>
+    <StyledPostText> {props.reply.replyText}</StyledPostText>
     <StyledDetails>
     {(function() {
         //will only see changable options if you are the user who's reply you're seeing
@@ -75,7 +75,7 @@ export const AddReply = (props) => {
     const handleAddReply = () => {
         //some url
         console.log(userId);
-        fetch("http://localhost:3000/api/posts/reply?postId" + postId+ "=&userId=" + userId  ,{
+        fetch("http://localhost:3000/api/posts/reply?postId=" + postId + "&userId=" + userId, {
             method: 'post',
             headers: {
                 'Accept': 'application/json, text/plain, */*',
