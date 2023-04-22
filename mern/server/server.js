@@ -183,14 +183,14 @@ app.put('/api/posts/', async (req, res) => {
       return res.status(404).json({ message: 'Post not found' });
     }
 
-    const user = await Users.findById(userId);
-
-    const updatedPost = await Posts.findByIdAndUpdate(postId, req.body, { new: true });
+    console.log(req.body);
+    const updatedPost = await Posts.findByIdAndUpdate(postId, {text: req.body.text}, { new: true });
     console.log("The updated post is ");
     console.log(updatedPost);
     res.json(updatedPost);
   } catch (error) {
     res.status(500).json({ message: 'Error updating post' });
+    console.log(error);
   }
 });
 
@@ -229,10 +229,10 @@ app.delete('/api/posts', async (req, res) => {
 
 // REPLIES
 // Create a new reply for a post
-app.post('/api/posts/:postId/reply', async (req, res) => {
-  const postId = req.params.postId;
-  const userId = req.body.userId;
-
+app.post('/api/posts/reply', async (req, res) => {
+  const postId = req.query.postId;
+  const userId = req.query.userId;
+  console.log("In add a reply api");
   try {
     const post = await Posts.findById(postId);
     if (!post) {
@@ -245,12 +245,11 @@ app.post('/api/posts/:postId/reply', async (req, res) => {
     }
 
     post.replies.push({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName, user: userId});
-    await user.save();
-    post.replies.push(reply);
     await post.save();
 
-    res.status(201).json({ message: 'Reply added successfully', reply });
+    res.status(201).json({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName, user: userId});
   } catch (error) {
+    console.error(error)
     res.status(500).json({ message: 'Error adding reply' });
   }
 });
@@ -268,6 +267,7 @@ app.get('/api/posts/:postId/replies', async (req, res) => {
     res.json(replies);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching replies' });
+    console.log(error);
   }
 });
 

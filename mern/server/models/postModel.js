@@ -14,7 +14,7 @@ const discussionSchema = new Schema({
     replyText : String,
     firstName : String,
     lastName: String,
-    user : ObjectId,
+    userId : ObjectId,
     }); 
   
   

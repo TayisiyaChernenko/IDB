@@ -8,13 +8,16 @@ export const Post = (props) => {
     const id = props.post._id;
     const userId = props.userId;
     //states for getting things from API relevant to the page 
-    const [post,setPost] = useState([]);
     const [name, setName] = useState({});
     const [replies, setReplies] = useState([]);
 
 
     
     const postInput = useInput();
+
+    useEffect(() => {
+        console.log(postInput);
+    }, [postInput]);
     //show alternative views of the page (replies to a post or updatable post)
     const [repliesOpen,setReplyStatus] = useState(false);
     const [updating, setUpdating] = useState(false);
@@ -32,7 +35,7 @@ export const Post = (props) => {
         //set the reply state to true so that replies are displayed 
         setReplyStatus(true);
         //will fetch the replies to this specific post 
-        fetch('/api/posts/' + id + '/replies',{method: 'get'})
+        fetch('http://localhost:3000/api/posts/' + id + '/replies',{method: 'get'})
         .then(response => {return response.json()})
         .then(data => {setReplies(data)})
     }
@@ -42,7 +45,7 @@ export const Post = (props) => {
         
         const url = 'http://localhost:3000/api/posts?id=' + id + "&userId=" + userId;
         fetch(url,{method: 'delete'});
-        props.setPosts(prev => prev.filter(posts => posts !== props.post ));
+        props.setPosts(prev => prev.filter(post => post._id !== id));
     }
     //Clicking edit on your post will change the updating state to true, and show you a different visual of a post in edit mode
     const handleEdit = () => {
@@ -54,10 +57,23 @@ export const Post = (props) => {
     }
     //This actually calls the API and updates the post once the user is satisified with the edits and takes them back to the reguar posts
     const handleUpdate = () => {
-        console.log(postInput.postInput);
-    fetch('http://localhost:3000/api/posts?id='+ id +"&userId=" +userId,{method: 'put'},
-    {body: JSON.stringify(postInput.postInput)} )
-    .then(setUpdating(false));
+        console.log(postInput);
+        fetch('http://localhost:3000/api/posts?id='+ id +"&userId=" +userId,{
+            method: 'put', 
+            headers: {
+                "Content-Type": "application/json",
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify({text: postInput.postInput})})
+            .then(() => {
+                props.setPosts(prev => prev.map(post => {
+                    if (post._id === id) {
+                        post.text = postInput.postInput
+                    }
+                    return post;
+                }))
+                setUpdating(false);
+            });
     }
 
 
@@ -105,7 +121,7 @@ export const Post = (props) => {
         return(
             <StyledExistingPost>
             <StyledInputBox
-                {...postInput.postInput} 
+                {...postInput} 
                 maxLength={400} />
         <StyledCharCount>Char Count {postInput.charCount}/400</StyledCharCount>
             <StyledDetails>
