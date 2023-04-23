@@ -1,5 +1,5 @@
-import { StyledDetails,StyledPostDate,StyledPostName,StyledPostText, StyledButton} from "../../styles/styledIDB/styledExistingPost"
-import {StyledExistingPost, StyledCreateReplyBox, StyledInputBox, StyledPostButton} from "../../styles/styledIDB/styledReplies"
+import { StyledDetails,StyledPostName,StyledPostText, StyledButton} from "../../styles/styledIDB/styledExistingPost"
+import {StyledExistingPost, StyledCreateReplyBox, StyledInputBox, StyledPostButton,StyledPostDate,} from "../../styles/styledIDB/styledReplies"
 import React, {useState, useEffect} from "react"
 import { StyledCharCount} from "../../styles/styledIDB/styledCreatePost";
 
