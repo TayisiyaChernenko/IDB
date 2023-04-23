@@ -4,6 +4,9 @@ import { useState } from "react";
 
 //This is the file for the user to create a post
 
+//Connect to the AI python server
+const client = new WebSocket("ws://localhost:8000/");
+
 export const CreatePost = (props) => {
     const postInput = useInput();
 
@@ -17,8 +20,15 @@ export const CreatePost = (props) => {
         courseName : course,
         sectionNum: section,
     };
+    
+    //function to recv data from AI python server
+    client.onopen = function(){
+        console.log("Client Connected");
+    };
 
     const handleAddPost = () => {
+
+        //send the post string to server
         fetch("http://localhost:3000/api/discussion/post" ,{
             method: 'post',
             headers: {
@@ -27,8 +37,10 @@ export const CreatePost = (props) => {
             },
             body: JSON.stringify(postInfo)
             }).then(response => {return response.json()})
-            .then(data => {props.setPosts([...props.posts,data])});
+            .then(data => {props.setPosts([...props.posts,data])
+            return data["_id"]}).then(id => client.send(JSON.stringify({id})));
         }
+
 
     return(
     <div>
