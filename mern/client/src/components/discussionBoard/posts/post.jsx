@@ -32,12 +32,19 @@ export const Post = (props) => {
 
 
     const handleReplies = () => {
-        //set the reply state to true so that replies are displayed 
-        setReplyStatus(true);
-        //will fetch the replies to this specific post 
-        fetch('http://localhost:3000/api/posts/' + id + '/replies',{method: 'get'})
-        .then(response => {return response.json()})
-        .then(data => {setReplies(data)})
+        (function(){
+            if(repliesOpen === true) {
+                 setReplyStatus(false)
+            } else{
+                 //set the reply state to true so that replies are displayed 
+                setReplyStatus(true);
+                //will fetch the replies to this specific post 
+                fetch('http://localhost:3000/api/posts/' + id + '/replies',{method: 'get'})
+                .then(response => {return response.json()})
+                .then(data => {setReplies(data)})
+            }
+
+        })()
     }
 
 
