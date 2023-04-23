@@ -1,65 +1,52 @@
-import socket
-import pickle
+import json
+import websockets
+import asyncio
+import certifi
 import pymongo
+from bson import ObjectId
 from transformers import pipeline
 
 qa_model = pipeline("question-answering", model='distilbert-base-cased-distilled-squad')
+ca = certifi.where()
+client = pymongo.MongoClient("mongodb+srv://tayisiyachernenko:HYF6s7cpA-tTwFc@clusterseniorproject.amhkbqh"".mongodb.net/?retryWrites=true&w=majority", tlsCAFile=ca)  # can be changed to the actual database
+db = client["test"]  # can be changed to a database name
+pdf = db["pdf"]  # subject to change collection name
+post = db["posts"]
 
 
 # function to call the question answer model
-def answer(q, c):
+def answer(q, c, p):
     result = qa_model(question=q, context=c)
-    return result
+    print(p)
+    if post.count_documents({"text": p["text"], "belongsToDiscission.course": p["belongsToDiscission"]["course"], "belongsToDiscission.section": p["belongsToDiscission"]["section"]}) <= 1:
+        val = {"replyText": str(result), "firstName": "AI", "lastName": "bot"}
+        post.update_one(p, {"$push": {"replies": val}})
+    else:
+        val = {"replyText": "Question already answered", "firstName": "AI", "lastName": "bot"}
+        post.update_one(p, {"$push": {"replies": val}})
 
 
-# function to run the server
-def server():
-    # set up the database connection
-    client = pymongo.MongoClient("mongodb://localhost:27017/")  # can be changed to the actual database
-    db = client["IDB"]  # can be changed to a database name
-    col = db["pdf"]  # subject to change collection name
-    # set up the host and the port
-    host = socket.gethostname()
-    port = 5000
-    server_socket = socket.socket()
-    server_socket.bind((host, port))
-    server_socket.listen(1)
-    conn, address = server_socket.accept()
-    print("Connection from: " + str(address))
-    # checks to see if the pdf/doc exists
-    paper = conn.recv(1024).decode()
-    exist = col.count_documents({"doc": paper}, limit=1)
-    conn.send(str(exist).encode())
-    while col.count_documents({"doc": paper}, limit=1) == 0:
-        conn.send("File does not exist".encode())
-        paper = conn.recv(1024).decode()
-        exist = col.count_documents({"doc": paper}, limit=1)
-        if exist:
-            conn.send(str(exist).encode())
-            break
-        conn.send(str(exist).encode())
-    # if it does exist, extract the pdf
-    # extract_pdf(paper)
-    query = {"doc": paper}
-    doc = col.find(query)
-    context = []
-    for i in doc:
-        context = i['text']
-    # keep running the server while the client asks questions
+async def new_client_connected(client_socket, path):
+    print("New Client Connected")
     while True:
-        q = conn.recv(1024).decode()
-        if not q:
-            break
-        print("Client sent: " + str(q))
-        a = []
+        input = await client_socket.recv()
+        message = json.loads(input)
+        # print("Client sent: ", input)
+        p = post.find_one({"_id": ObjectId(message["id"])})
+        c = "My name is Linhnam Nguyen. I am currently 21 years old. My hobbies are playing video games and watching " \
+            "anime. I am the oldest out of my 4 brothers and a sister."
+        # subject: question. Split at ":"
+        q = p["text"]
+        answer(q, c, p)
+        # await client_socket.send(a)
 
-        for i in range(len(context)):
-            a.append(answer(q, context[i]))
-        data = pickle.dumps(a)
 
-        conn.send(data)
-    conn.close()
+async def start_server():
+    print("Server Start")
+    await websockets.serve(new_client_connected, "localhost", 8000)
 
 
 if __name__ == '__main__':
-    server()
+    event_loop = asyncio.get_event_loop()
+    event_loop.run_until_complete(start_server())
+    event_loop.run_forever()
