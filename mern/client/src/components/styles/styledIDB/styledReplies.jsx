@@ -39,6 +39,14 @@ export const StyledInputBox = styled.input `
     border:0;
 `
 
+export const StyledPostDate = styled.div`
+    color: grey;
+    font-family: sans-serif;
+    position: relative;
+    margin-top: 10px;
+    margin-right: 10px
+`
+
 export const StyledPostButton = styled.button `
 align-self:right;
 color:white;
