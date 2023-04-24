@@ -152,10 +152,14 @@ app.post('/api/discussion/post', async (req, res) => {
     }
 
     // Create the new post
+
+    let dt = getDateAndTime();
+
     var newPost = new Posts({
       text: req.body.text,
       belongsToDiscission: belongsTo,
-      //datePosted: req.body.datePosted,
+      timePosted: dt.time,
+      datePosted: dt.date,
       replies: req.body.replies || [],
     });
 
@@ -170,6 +174,25 @@ app.post('/api/discussion/post', async (req, res) => {
     res.status(500).json({ message: 'Error creating post' });
   }
 });
+
+function getDateAndTime(){
+  let date_time = new Date();
+  let month = ("0" + (date_time.getMonth() + 1)).slice(-2);
+  let day = ("0" + date_time.getDate()).slice(-2);
+  let year = date_time.getFullYear();
+  let minutes = ("0" + (date_time.getMinutes() + 1)).slice(-2);
+  let hour = date_time.getHours();
+  let ap = 'AM'
+  if (hour   > 11) { ap = "PM";             }
+  if (hour   > 12) { hour = hour - 12;      }
+  if (hour   == 0) { hour = 12;             }
+  if (hour   < 10) { hour   = "0" + hour;   }
+
+  let time = hour + ":" + minutes + " " + ap; 
+  let date = month + "/" + day + "/" + year;
+  return {time,date};
+}
+
 
 
 // Update an existing post by ID
