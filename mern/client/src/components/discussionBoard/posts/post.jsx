@@ -104,7 +104,7 @@ export const Post = (props) => {
                 )
              }
             })()}
-            <StyledPostDate>Posted {props.post.time} on {props.post.date}</StyledPostDate>
+             <StyledPostDate>Posted {props.post.datePosted} at {props.post.timePosted}</StyledPostDate>
             <StyledButton onClick={handleReplies}>Replies</StyledButton>
             </StyledDetails>
         </StyledExistingPost>
@@ -115,7 +115,7 @@ export const Post = (props) => {
                     //Generate replies
                     <div>
                     <ul>
-                    {replies.map(reply => (<li key={reply._id}><Reply {...{reply,userId, id}}/></li>))}
+                    {replies.map(reply => (<li key={reply._id}><Reply {...{reply,userId, id, setReplies}}/></li>))}
                     </ul>
                      <AddReply {...{id, userId, replies, setReplies}}/>
                      </div>
@@ -129,7 +129,8 @@ export const Post = (props) => {
             <StyledExistingPost>
             <StyledInputBox
                 {...postInput} 
-                maxLength={400} />
+                maxLength={400}
+                defaultValue = {props.post.text} />
         <StyledCharCount>Char Count {postInput.charCount}/400</StyledCharCount>
             <StyledDetails>
             <StyledButton onClick={handleUpdate}>Update Post</StyledButton>
