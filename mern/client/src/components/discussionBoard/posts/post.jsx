@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from "react";
-import { StyledDetails, StyledExistingPost,StyledPostDate,StyledPostName,StyledPostText, StyledButton} from "../../styles/styledIDB/styledExistingPost"
+import { StyledDetails, StyledExistingPost,StyledPostDate,StyledPostName,StyledPostText, StyledButton, StyledRHS} from "../../styles/styledIDB/styledExistingPost"
 import { StyledInputBox , StyledCharCount} from "../../styles/styledIDB/styledCreatePost";
 import { AddReply, Reply } from "./reply";
 //This is the file for posts that are already in the database stytem
@@ -94,6 +94,8 @@ export const Post = (props) => {
         <StyledExistingPost>
             <StyledPostName> {name.firstName} {name.lastName}  </StyledPostName>
             <StyledPostText> {props.post.text}</StyledPostText>
+            <StyledRHS>
+            <StyledPostDate>Posted {props.post.datePosted} at {props.post.timePosted}</StyledPostDate>
             <StyledDetails>
             {(function() {
             if (userId === name._id) {
@@ -104,9 +106,9 @@ export const Post = (props) => {
                 )
              }
             })()}
-             <StyledPostDate>Posted {props.post.datePosted} at {props.post.timePosted}</StyledPostDate>
             <StyledButton onClick={handleReplies}>Replies</StyledButton>
             </StyledDetails>
+            </StyledRHS>
         </StyledExistingPost>
         {(function() {
             if (repliesOpen === true) {
