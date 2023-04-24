@@ -270,7 +270,7 @@ app.post('/api/posts/reply', async (req, res) => {
     post.replies.push({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName, user: userId});
     await post.save();
 
-    res.status(201).json({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName, user: userId});
+    res.status(201).json({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName, userId: userId});
   } catch (error) {
     console.error(error)
     res.status(500).json({ message: 'Error adding reply' });
