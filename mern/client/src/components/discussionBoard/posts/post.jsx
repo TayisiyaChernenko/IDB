@@ -115,7 +115,7 @@ export const Post = (props) => {
                     //Generate replies
                     <div>
                     <ul>
-                    {replies.map(reply => (<li key={reply._id}><Reply {...{reply,userId, id}}/></li>))}
+                    {replies.map(reply => (<li key={reply._id}><Reply {...{reply,userId, id, setReplies}}/></li>))}
                     </ul>
                      <AddReply {...{id, userId, replies, setReplies}}/>
                      </div>

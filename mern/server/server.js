@@ -206,10 +206,10 @@ app.put('/api/posts/', async (req, res) => {
       return res.status(404).json({ message: 'Post not found' });
     }
 
-    console.log(req.body);
-    const updatedPost = await Posts.findByIdAndUpdate(postId, {text: req.body.text}, { new: true });
-    console.log("The updated post is ");
-    console.log(updatedPost);
+    let dt = getDateAndTime();
+    console.log("New Date/Time");
+
+    const updatedPost = await Posts.findByIdAndUpdate(postId, {$set: {'text': req.body.text, 'timePosted': dt.time, 'datePosted': dt.date}} , { new: true });
     res.json(updatedPost);
   } catch (error) {
     res.status(500).json({ message: 'Error updating post' });
@@ -294,10 +294,28 @@ app.get('/api/posts/:postId/replies', async (req, res) => {
   }
 });
 
+// Update an existing reply by ID
+app.put('/api/posts/replies', async (req, res) => {
+  const postId = req.query.id;
+
+  try {
+    const post = await Posts.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    const updatedPost = await Posts.findByIdAndUpdate(postId, {$set: {'replyText': req.body.text }}, { new: true });
+    res.json(updatedPost);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating post reply' });
+    console.log(error);
+  }
+});
+
 // Delete a reply by reply ID
-app.delete('/api/posts/:postId/replies', async (req, res) => {
+app.delete('/api/posts/replies', async (req, res) => {
   const replyId = req.query.id;
-  const postId = req.params.postId;
+  const postId = req.query.postId;
 
   try {
     const reply = await Posts.update({_id : postId},  ... {$pull : { "replies" : {"_id":replyId} } } )
