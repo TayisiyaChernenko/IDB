@@ -1,5 +1,5 @@
 import React from "react";
-import { StyledBox, StyledCharCount, StyledInputBox, StyledPostButton} from "../../styles/styledIDB/styledCreatePost";
+import { StyledBox, StyledCharCount, StyledDetails, StyledInputBox, StyledPostButton, StyledTitleBox} from "../../styles/styledIDB/styledCreatePost";
 import { useState } from "react";
 
 //This is the file for the user to create a post
@@ -9,6 +9,7 @@ const client = new WebSocket("ws://localhost:8000/");
 
 export const CreatePost = (props) => {
     const postInput = useInput();
+    const titleInput = useTitleInput();
 
     const userId = props.userId;
     const course = props.course;
@@ -16,6 +17,7 @@ export const CreatePost = (props) => {
     
     const postInfo = {
         userId: userId,
+        title:titleInput.titleInput,
         text: postInput.postInput,
         courseName : course,
         sectionNum: section,
@@ -45,6 +47,13 @@ export const CreatePost = (props) => {
     return(
     <div>
         <StyledBox>
+        <StyledTitleBox
+            {...titleInput} 
+            maxLength={20}
+            placeholder = "Thread Title ... "   
+            >
+        </StyledTitleBox>
+        <StyledCharCount>Char Count {titleInput.charCount}/20</StyledCharCount>
         <StyledInputBox
         {...postInput} 
         maxLength={400}
@@ -52,8 +61,10 @@ export const CreatePost = (props) => {
         placeholder = "Your question ... " 
         >
         </StyledInputBox>
+        <StyledDetails>
         <StyledCharCount>Char Count {postInput.charCount}/400</StyledCharCount>
         <StyledPostButton onClick={handleAddPost}>Post</StyledPostButton>
+        </StyledDetails>
         </StyledBox>
         
     </div>
@@ -73,6 +84,21 @@ const useInput = () => {
     }
     return{
         postInput,
+        charCount,
+        onChange
+    }
+}
+
+const useTitleInput = () => {
+    const [titleInput,setTitleInput] = useState('');
+    const [charCount,setCharCount] = useState(0);
+
+    function onChange(e) {
+        setTitleInput(e.target.value);
+        setCharCount(e.target.value.length);
+    }
+    return{
+        titleInput,
         charCount,
         onChange
     }

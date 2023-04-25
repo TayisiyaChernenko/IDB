@@ -19,6 +19,7 @@ const discussionSchema = new Schema({
   
   
 const PostsSchema = new Schema({
+  threadTitle: String,
   text: String,
   belongsToDiscission : discussionSchema,
   timePosted: String,

@@ -156,6 +156,7 @@ app.post('/api/discussion/post', async (req, res) => {
     let dt = getDateAndTime();
 
     var newPost = new Posts({
+      threadTitle: req.body.title,
       text: req.body.text,
       belongsToDiscission: belongsTo,
       timePosted: dt.time,
