@@ -15,9 +15,6 @@ export const Post = (props) => {
     
     const postInput = useInput();
 
-    useEffect(() => {
-        console.log(postInput);
-    }, [postInput]);
     //show alternative views of the page (replies to a post or updatable post)
     const [repliesOpen,setReplyStatus] = useState(false);
     const [updating, setUpdating] = useState(false);
@@ -76,7 +73,6 @@ export const Post = (props) => {
     }
     //This actually calls the API and updates the post once the user is satisified with the edits and takes them back to the reguar posts
     const handleUpdate = () => {
-        console.log(postInput);
         fetch('http://localhost:3000/api/posts?id='+ id +"&userId=" +userId,{
             method: 'put', 
             headers: {
@@ -139,7 +135,6 @@ export const Post = (props) => {
                         </StyledExistingPost>
                         {(function() {
                             if (repliesOpen === true) {
-                                console.log("The replies are open!");
                                 return (
                                     //Generate replies
                                     <div>

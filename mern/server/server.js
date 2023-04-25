@@ -256,22 +256,23 @@ app.delete('/api/posts', async (req, res) => {
 app.post('/api/posts/reply', async (req, res) => {
   const postId = req.query.postId;
   const userId = req.query.userId;
-  console.log("In add a reply api");
   try {
     const post = await Posts.findById(postId);
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
 
+
     const user = await Users.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+    let dt = getDateAndTime();
 
-    post.replies.push({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName, user: userId});
+    post.replies.push({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName, timeReplied: dt.time, dateReplied:dt.date ,  userId: userId});
     await post.save();
 
-    res.status(201).json({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName, userId: userId});
+    res.status(201).json({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName,timeReplied:dt.time, dateReplied:dt.date , userId: userId});
   } catch (error) {
     console.error(error)
     res.status(500).json({ message: 'Error adding reply' });

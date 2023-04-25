@@ -36,7 +36,7 @@ export const StyledBoard= styled.div `
     display:flex;
     flex-direction:column;
     align-items: center;
-    width: 90vw;
+    width: 85vw;
     height: 100vh;
     padding-left: 4vw;
     `;
