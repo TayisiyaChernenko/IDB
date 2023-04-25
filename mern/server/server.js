@@ -316,11 +316,12 @@ app.put('/api/posts/replies', async (req, res) => {
 
 // Delete a reply by reply ID
 app.delete('/api/posts/replies', async (req, res) => {
-  const replyId = req.query.id;
+  const replyId = req.query.replyId;
   const postId = req.query.postId;
-
   try {
-    const reply = await Posts.update({_id : postId},  ... {$pull : { "replies" : {"_id":replyId} } } )
+    const post = await Posts.findById(postId);
+    const reply = await post.update({$pull : { "replies" : {"_id" : replyId} } } );
+    console.log(post);
     WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 } );
     if (!reply) {
       return res.status(404).json({ message: 'Reply not found' });
