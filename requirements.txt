@@ -1,0 +1,8 @@
+certifi==2022.12.7
+websockets==11.0.2
+websocket_client==1.5.1
+pymongo==4.3.3
+nltk==3.8.1
+transformers==4.28.1
+sklearn==0.0.post4
+sklearn-features==0.0.2
