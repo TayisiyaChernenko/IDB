@@ -45,13 +45,21 @@ export const StyledPostName = styled.div `
 export const StyledPostDate = styled.div`
     color: grey;
     font-family: sans-serif;
-    position: absolute;
-    margin-top: 10px;
+    top: 0;
+    left: 0;
 `
 
 export const StyledDetails = styled.div`
     display: flex;
     flex-direction: row;
+    border:0;
+    bottom:0;
+    margin-left:auto;
+`
+
+export const StyledRHS = styled.div`
+    display: flex;
+    flex-direction: column;
     border:0;
     bottom:0;
     margin-left:auto;
