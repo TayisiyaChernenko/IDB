@@ -67,8 +67,8 @@ def LemNormalize(text):
 
 
 def response(q, p):
-    str = p["text"].split(":")
-    name = str[0].lower()
+    str = p["text"]
+    name = p["threadTitle"].lower()
     course = p["belongsToDiscission"]["course"]
     section = p["belongsToDiscission"]["section"]
     txt = doc.find_one({"course": course, "section": section, "name": name})
@@ -98,10 +98,12 @@ async def new_client_connected(client_socket, path):
         input = await client_socket.recv()
         message = json.loads(input)
         p = post.find_one({"_id": ObjectId(message["id"])})
-        str = p["text"].split(":")
-        q = str[1].strip()
-        n = str[0].strip().lower()
+        print(p)
+        q = p["text"]
+        print(q)
+        n = p["threadTitle"].lower()
         c = doc.find_one({"course": p["belongsToDiscission"]["course"], "section": p["belongsToDiscission"]["section"], "name": n})
+        print(c)
         answer(q, c["text"], p)
 
 
