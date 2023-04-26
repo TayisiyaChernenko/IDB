@@ -30,7 +30,7 @@ export const AskQuestion = (props) => {
         //save the question for posting later on 
         props.setQuestion([titleInput.titleInput,postInput.postInput]);
         //send AI the question data
-        client.send(JSON.stringify({questionInfo}));
+        client.send(JSON.stringify(questionInfo));
         //get response back from AI
         props.setResponse("Some response from AI");
         //tell board a question was asked
