@@ -230,7 +230,7 @@ app.delete('/api/posts', async (req, res) => {
     }
     const user = await Users.findById(userId);
     await Posts.findByIdAndDelete(postId);
-    user.postIds = user.postIDs.filter(id => id.toString() !== postId);
+    user.postIDs = user.postIDs.filter(id => id.toString() !== postId);
     await user.save();
 
     res.json({ message: 'Post deleted successfully' });
@@ -320,7 +320,7 @@ app.delete('/api/posts/replies', async (req, res) => {
   const postId = req.query.postId;
   try {
     const post = await Posts.findById(postId);
-    const reply = await post.update({$pull : { "replies" : {"_id" : replyId} } } );
+    const reply = await post.replies.updateOne( { }, {$pull : {_id :replyId} } );
     console.log(post);
     WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 } );
     if (!reply) {
