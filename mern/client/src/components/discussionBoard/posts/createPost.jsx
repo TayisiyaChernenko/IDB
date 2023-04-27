@@ -27,6 +27,7 @@ export const AskQuestion = (props) => {
 
 
     const handleAskQuestion = () => { 
+        console.log(" A question was Asked");
         //save the question for posting later on 
         props.setQuestion([titleInput.titleInput,postInput.postInput]);
         //send AI the question data
@@ -57,7 +58,7 @@ export const AskQuestion = (props) => {
         </StyledInputBox>
         <StyledDetails>
         <StyledCharCount>Char Count {postInput.charCount}/400</StyledCharCount>
-        <StyledPostButton onClick={handleAskQuestion}>Post</StyledPostButton>
+        <StyledPostButton onClick={handleAskQuestion}>Ask</StyledPostButton>
         </StyledDetails>
         </StyledBox>
         
@@ -119,7 +120,8 @@ export const CreatePost = (props) => {
     
 
     const handleAddPost = () => {
-
+        console.log(title);
+        console.log(text);
         //send the post string to server
         fetch("http://localhost:3000/api/discussion/post" ,{
             method: 'post',
@@ -141,8 +143,8 @@ export const CreatePost = (props) => {
     return(
     <div>
         <p>Still want to post to the discussion board?</p>
-        <StyledDirectionButton onClick={handleAddPost}>Don't Post</StyledDirectionButton>
-        <StyledDirectionButton onClick={handleBack}>Post</StyledDirectionButton>
+        <StyledDirectionButton onClick={handleBack}>Don't Post</StyledDirectionButton>
+        <StyledDirectionButton onClick={handleAddPost}>Post</StyledDirectionButton>
     </div>
     );
 }

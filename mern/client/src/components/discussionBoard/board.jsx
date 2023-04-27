@@ -30,10 +30,6 @@ export const Board = () => {
     const postProps = {userId,course,section, posts,setPosts, question, setQuestionAsked};
     const postsProps = {userId,course,section, posts,setPosts};
 
-    useEffect(() => {
-       console.log(wasQuestionAsked);
-    }, [wasQuestionAsked])
-
     return(
         <IDBLayout>
         <div>
@@ -54,7 +50,7 @@ export const Board = () => {
                 return(
                     <StyledPrompt>
                     <p> <b> You Asked: </b> </p> 
-                    <p> {question} </p>
+                    <p> {question[0]} </p>
                     <p> {response}</p>
                     <CreatePost {...postProps}/>
                     </StyledPrompt>
