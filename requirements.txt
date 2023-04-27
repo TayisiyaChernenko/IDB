@@ -6,3 +6,10 @@ nltk==3.8.1
 transformers==4.28.1
 sklearn==0.0.post4
 sklearn-features==0.0.2
+
+(pip commands to install needs of AI)
+pip install aspose-words
+pip install --user -U nltk
+pip3 install torch torchvision torchaudio (Only for windows)
+pip install transformers
+pip install -U scikit-learn
