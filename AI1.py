@@ -13,13 +13,13 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # connect to the database
 ca = certifi.where()
-client = pymongo.MongoClient("mongodb+srv://tayisiyachernenko:HYF6s7cpA-tTwFc@clusterseniorproject.amhkbqh"".mongodb.net/?retryWrites=true&w=majority", tlsCAFile=ca)  # can be changed to the actual database
+client = pymongo.MongoClient(
+    "mongodb+srv://tayisiyachernenko:HYF6s7cpA-tTwFc@clusterseniorproject.amhkbqh"".mongodb.net/?retryWrites=true&w=majority",
+    tlsCAFile=ca)  # can be changed to the actual database
 db = client["test"]  # can be changed to a database name
 doc = db["documents"]  # subject to change collection name
 post = db["posts"]
 
-model_name = "deepset/bert-large-uncased-whole-word-masking-squad2"
-nlp = pipeline('question-answering', model=model_name, tokenizer=model_name)
 warnings.filterwarnings('ignore')
 keywords = ["Professor", "Course", "Student", "information", "Required", "Contact", "Pre-requisite", "Co-requisite",
             "Description",
@@ -40,20 +40,17 @@ keywords = ["Professor", "Course", "Student", "information", "Required", "Contac
 
 # function to call the question answer model
 def answer(q, c, p):
+    model_name = "deepset/bert-large-uncased-whole-word-masking-squad2"
+    nlp = pipeline('question-answering', model=model_name, tokenizer=model_name)
     QA_input = {
         'question': q,
         'context': c
     }
     result = nlp(QA_input)
     res = result['answer']
-    res += "\nYou may also looking for: "
-    res += response(q, p)
-    if post.count_documents({"text": p["text"], "belongsToDiscission.course": p["belongsToDiscission"]["course"], "belongsToDiscission.section": p["belongsToDiscission"]["section"]}) <= 1:
-        val = {"replyText": str(res), "firstName": "AI", "lastName": "bot"}
-        post.update_one(p, {"$push": {"replies": val}})
-    else:
-        val = {"replyText": "Question already answered", "firstName": "AI", "lastName": "bot"}
-        post.update_one(p, {"$push": {"replies": val}})
+    # res += "\nYou may also looking for: "
+    # res += response(q, p)
+    return res
 
 
 def LemTokens(tokens):
@@ -98,13 +95,18 @@ async def new_client_connected(client_socket, path):
         input = await client_socket.recv()
         message = json.loads(input)
         p = post.find_one({"_id": ObjectId(message["id"])})
-        print(p)
         q = p["text"]
-        print(q)
         n = p["threadTitle"].lower()
-        c = doc.find_one({"course": p["belongsToDiscission"]["course"], "section": p["belongsToDiscission"]["section"], "name": n})
-        print(c)
-        answer(q, c["text"], p)
+        ans = ""
+        for i in doc.find({"course": p["belongsToDiscission"]["course"], "section": p["belongsToDiscission"]["section"]}):
+            ans += answer(q, i["text"], p) + "\n"
+        print(ans)
+        # send it back to the FE?
+        await client_socket.send(ans)
+        """ This sends stuff to the DB
+        val = {"replyText": str(ans), "firstName": "AI", "lastName": "bot"}
+        post.update_one(p, {"$push": {"replies": val}})
+        """
 
 
 async def start_server():
