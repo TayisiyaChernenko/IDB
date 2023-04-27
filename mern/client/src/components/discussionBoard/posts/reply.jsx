@@ -12,11 +12,15 @@ export const Reply = (props) => {
     const loggedInUser = props.userId;
     const [replyText,setReplyText] = useState();
     const [updating, setUpdating] = useState(false);
+    console.log(props.reply.text);
+    console.log(loggedInUser);
+    console.log(props.reply);
+    console.log(props.reply._id);
 
     
 
     const handleDelete = () => {
-        fetch('/api/posts/' + props.postID+ '/replies?replyId=' + props.reply._id,{method: 'delete'});
+        fetch('http://localhost:3000/api/posts/replies?replyId=' + props.reply._id + "&postId="+ props.id ,{method: 'delete'});
         props.setReplies(prev => prev.filter(replies => replies !== props.reply ));
     }
 
@@ -53,7 +57,7 @@ export const Reply = (props) => {
                 )
              }
             })()}
-            <StyledPostDate>Posted {props.reply.time} on {props.reply.date}</StyledPostDate>
+            <StyledPostDate>Replied {props.reply.timeReplied} {props.reply.dateReplied}</StyledPostDate>
             </StyledDetails>
     </StyledExistingPost>
     )
@@ -64,7 +68,6 @@ export const AddReply = (props) => {
 
     const userId = props.userId;
     const postId = props.id;
-    console.log(postInput.postInput);
     const replyInfo = {
         text: postInput.postInput,
         firstName : props.firstName,
@@ -74,7 +77,7 @@ export const AddReply = (props) => {
 
     const handleAddReply = () => {
         //some url
-        console.log(userId);
+
         fetch("http://localhost:3000/api/posts/reply?postId=" + postId + "&userId=" + userId, {
             method: 'post',
             headers: {

@@ -1,5 +1,5 @@
-import React , {useState,useEffect}from "react";
-import { IDBLayout, StyledBoard } from "../styles/styledIDB/styledIDBHome";
+import React , {useState, useEffect}from "react";
+import { IDBLayout, StyledBoard, StyledContent, StyledDecision, StyledPostOptions, StyledPrevPosts, StyledPrompt } from "../styles/styledIDB/styledIDBHome";
 import { StyledTitle } from "../styles/authStyles/styledLogin";
 import { Nav } from "./nav/nav";
 import {useLocation} from 'react-router-dom';
@@ -7,7 +7,7 @@ import {useLocation} from 'react-router-dom';
 
 
 import { PrevPosts } from "./posts/prevPosts";
-import { CreatePost } from "./posts/createPost";
+import { AskQuestion, CreatePost } from "./posts/createPost";
 import { Mark } from "../design";
 import { StyledMark } from "../styles/styledDesign";
 
@@ -22,19 +22,42 @@ export const Board = () => {
     const course = location.state.course;
     const section = location.state.section;
     const [posts, setPosts] = useState([]);
+    const [wasQuestionAsked, setQuestionAsked] = useState(false);
+    const [question, setQuestion] = useState([]);
+    const [response, setResponse] = useState("");
 
-    const props = {userId,course,section, posts,setPosts};
+    const askProps = {userId,course,section, posts, setQuestionAsked, setQuestion, setResponse};
+    const postProps = {userId,course,section, posts,setPosts, question, setQuestionAsked};
+    const postsProps = {userId,course,section, posts,setPosts};
 
     return(
-    <IDBLayout>
+        <IDBLayout>
         <div>
         <Nav {...{userId,setPosts}}/>
         <StyledMark><Mark/></StyledMark>
         </div>
         <StyledBoard>
             <StyledTitle><h1>Intelligent Discussion Board</h1></StyledTitle>
-            <PrevPosts {...props}/>
-            <CreatePost {...props}/>
+             {(function(){
+            if(wasQuestionAsked === false) {
+                return(
+                    <div>
+                        <PrevPosts {...postsProps}/>
+                        <AskQuestion {...askProps}/>
+                    </div>
+                )
+            } else{
+                return(
+                    <StyledPrompt>
+                    <p> <b> You Asked: </b> </p> 
+                    <p> {question[0]} </p>
+                    <p> {response}</p>
+                    <CreatePost {...postProps}/>
+                    </StyledPrompt>
+                )
+            }
+        })()}
         </StyledBoard>
-    </IDBLayout> )
+       </IDBLayout> 
+    )
     }

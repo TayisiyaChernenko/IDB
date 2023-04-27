@@ -61,3 +61,14 @@ border:0;
 bottom:0;
 margin-left:auto;
 `
+
+export const StyledDirectionButton = styled.button `
+    color : rgb(5, 60, 10);
+    font-family : sans-serif;
+    border:0;
+    width: 10vw;
+    margin-left:auto;
+    border-radius: 20px;
+    bottom:0;
+    margin-left: 5px;
+`

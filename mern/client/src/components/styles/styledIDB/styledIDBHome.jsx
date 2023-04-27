@@ -36,7 +36,7 @@ export const StyledBoard= styled.div `
     display:flex;
     flex-direction:column;
     align-items: center;
-    width: 90vw;
+    width: 85vw;
     height: 100vh;
     padding-left: 4vw;
     `;
@@ -46,4 +46,19 @@ display:flex;
 flex-direction:row;
 width: 100vw;
 height: 100vh;
+`
+
+export const StyledPrompt = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    align-self: center;
+    border: 1px solid black;
+    border-radius: 25px;
+    width: 75vw;
+    height: 75vh;
+    margin-right: 5%;
+    background-color: #EEEEEE;
+    box-shadow: 2px 2px 2px 1px rgba(5, 60, 10, 0.8);
+    overflow-y: scroll;
 `

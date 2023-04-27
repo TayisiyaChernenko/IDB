@@ -6,7 +6,6 @@ const ObjectId = Schema.ObjectId;
 const discussionSchema = new Schema({
   course : String,
   section : String,
-  datePosted: Date,
   }); 
 
 
@@ -14,6 +13,8 @@ const discussionSchema = new Schema({
     replyText : String,
     firstName : String,
     lastName: String,
+    timeReplied: String,
+    dateReplied: String,
     userId : ObjectId,
     }); 
   

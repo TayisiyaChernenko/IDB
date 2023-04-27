@@ -17,7 +17,7 @@ display: flex;
 flex-direction: column;
 float:right;
 background-color: #EEEEEE;
-width: 60vw;
+width: 55vw;
 height: 8vh; 
 margin-top: 10px ;
 margin-left: 20px;

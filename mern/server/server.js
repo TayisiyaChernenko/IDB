@@ -230,7 +230,7 @@ app.delete('/api/posts', async (req, res) => {
     }
     const user = await Users.findById(userId);
     await Posts.findByIdAndDelete(postId);
-    user.postIds = user.postIDs.filter(id => id.toString() !== postId);
+    user.postIDs = user.postIDs.filter(id => id.toString() !== postId);
     await user.save();
 
     res.json({ message: 'Post deleted successfully' });
@@ -256,22 +256,23 @@ app.delete('/api/posts', async (req, res) => {
 app.post('/api/posts/reply', async (req, res) => {
   const postId = req.query.postId;
   const userId = req.query.userId;
-  console.log("In add a reply api");
   try {
     const post = await Posts.findById(postId);
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
     }
 
+
     const user = await Users.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
+    let dt = getDateAndTime();
 
-    post.replies.push({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName, user: userId});
+    post.replies.push({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName, timeReplied: dt.time, dateReplied:dt.date ,  userId: userId});
     await post.save();
 
-    res.status(201).json({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName, userId: userId});
+    res.status(201).json({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName,timeReplied:dt.time, dateReplied:dt.date , userId: userId});
   } catch (error) {
     console.error(error)
     res.status(500).json({ message: 'Error adding reply' });
@@ -315,11 +316,12 @@ app.put('/api/posts/replies', async (req, res) => {
 
 // Delete a reply by reply ID
 app.delete('/api/posts/replies', async (req, res) => {
-  const replyId = req.query.id;
+  const replyId = req.query.replyId;
   const postId = req.query.postId;
-
   try {
-    const reply = await Posts.update({_id : postId},  ... {$pull : { "replies" : {"_id":replyId} } } )
+    const post = await Posts.findById(postId);
+    const reply = await post.replies.updateOne( { }, {$pull : {_id :replyId} } );
+    console.log(post);
     WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 } );
     if (!reply) {
       return res.status(404).json({ message: 'Reply not found' });
