@@ -39,7 +39,7 @@ keywords = ["Professor", "Course", "Student", "information", "Required", "Contac
 
 
 # function to call the question answer model
-def answer(q, c, p):
+def answer(q, c):
     model_name = "deepset/bert-large-uncased-whole-word-masking-squad2"
     nlp = pipeline('question-answering', model=model_name, tokenizer=model_name)
     QA_input = {
@@ -48,8 +48,6 @@ def answer(q, c, p):
     }
     result = nlp(QA_input)
     res = result['answer']
-    # res += "\nYou may also looking for: "
-    # res += response(q, p)
     return res
 
 
@@ -94,13 +92,17 @@ async def new_client_connected(client_socket, path):
     while True:
         input = await client_socket.recv()
         message = json.loads(input)
-        p = post.find_one({"_id": ObjectId(message["id"])})
-        q = p["text"]
-        n = p["threadTitle"].lower()
+        print(message)
+        title = message["title"]
         ans = ""
-        for i in doc.find({"course": p["belongsToDiscission"]["course"], "section": p["belongsToDiscission"]["section"]}):
-            ans += answer(q, i["text"], p) + "\n"
-        print(ans)
+        if doc.find_one({"course": message["courseName"], "section": message["sectionNum"], "name": title}) is None:
+            for i in doc.find({"course": message["courseName"], "section": message["sectionNum"]}):
+                ans += answer(message["text"], i["text"]) + "\n"
+            print(ans)
+        else:
+            query = doc.find_one({"course": message["courseName"], "section": message["sectionNum"], "name": title})
+            ans += answer(message["text"], query["text"])
+            print(ans)
         # send it back to the FE?
         await client_socket.send(ans)
         """ This sends stuff to the DB

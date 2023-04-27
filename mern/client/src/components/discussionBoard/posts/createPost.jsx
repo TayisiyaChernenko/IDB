@@ -33,7 +33,9 @@ export const AskQuestion = (props) => {
         //send AI the question data
         client.send(JSON.stringify(questionInfo));
         //get response back from AI
-        props.setResponse("Some response from AI");
+        client.onmessage = function(e){
+            props.setResponse(e.data);
+        };
         //tell board a question was asked
         props.setQuestionAsked(true);
         
