@@ -12,6 +12,7 @@ const Db = process.env.ATLAS_URI;
 const mongoose = require('mongoose');
 const Posts = require('./models/postModel');
 const Users = require('./models/userModel');
+const { ConnectionClosedEvent } = require('mongodb');
 
 // Create an Express app instance
 const app = express();
@@ -115,7 +116,6 @@ app.post('/api/posts', async (req, res) => {
     }
 
     let dt = getDateAndTime();
-
     var newPost = new Posts({
       threadTitle: req.body.title,
       text: req.body.text,
@@ -141,7 +141,7 @@ app.get('/api/posts/root', async (req, res) => {
   const course = req.query.course;
   const section = req.query.section;
   try {
-    const posts = await Posts.find({ 'replyingTo': { $size: 0 } ,'belongsToDiscission.course' :course, 'belongsToDiscission.section' : section});
+    const posts = await Posts.find({ 'replyingTo': { $exists: false} ,'belongsToDiscission.course' :course, 'belongsToDiscission.section' : section});
     res.json(posts);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching root posts' });
@@ -171,7 +171,6 @@ app.put('/api/posts/', async (req, res) => {
 app.delete('/api/posts', async (req, res) => {
   const postId = req.query.id;
   const userId = req.query.userId;
-
   try {
     const post = await Posts.findById(postId);
     if (!post) {
@@ -204,7 +203,6 @@ app.delete('/api/posts', async (req, res) => {
 // Get all replies for a specific post
 app.get('/api/posts/replies', async (req, res) => {
   const parentPostId = req.query.parentPostId;
-  console.log("Fetching replies")
   try {
     const replies = await Posts.find({ replyingTo: parentPostId });
     res.json(replies);
@@ -212,26 +210,6 @@ app.get('/api/posts/replies', async (req, res) => {
     res.status(500).json({ message: 'Error fetching replies' });
   }
 });
-
-
-// should only add post to user chain IF it's a thread post not a reply
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
  // Get user name by postid
  app.get('/api/user/', async (req, res) => {
@@ -244,13 +222,13 @@ app.get('/api/posts/replies', async (req, res) => {
   }
 });
   
-// Get all posts by userId
+// Get all root posts by userId
 app.get('/api/user/posts', async (req, res) => {
   const userId=req.query.id;
   try {
     const user = await Users.findById(userId);
     const postIds = user.postIDs;
-    const posts = await Posts.find({ _id : {$in : postIds}});
+    const posts = await Posts.find({ _id : {$in : postIds}, 'replyingTo': { $exists: false}});
     res.json(posts);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching posts' });

@@ -14,7 +14,7 @@ const PostsSchema = new Schema({
   belongsToDiscission : discussionSchema,
   timePosted: String,
   datePosted: String,
-  replyingTo: [ObjectId],
+  replyingTo: ObjectId,
 });
 
 

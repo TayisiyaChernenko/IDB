@@ -117,7 +117,6 @@ export const CreatePost = (props) => {
         text: text,
         courseName : course,
         sectionNum: section,
-        replyingTo: [],
     };
     
 

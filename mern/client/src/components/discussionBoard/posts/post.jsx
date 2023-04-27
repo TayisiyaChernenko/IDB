@@ -1,15 +1,19 @@
 import React, {useState,useEffect} from "react";
 import { StyledDetails, StyledExistingPost,StyledPostDate,StyledPostName,StyledPostText, StyledButton, StyledRHS, StyledClosedThread, StyledThreadTitle, StyledThreadDate, StyledOpenThread} from "../../styles/styledIDB/styledExistingPost"
 import { StyledInputBox , StyledCharCount} from "../../styles/styledIDB/styledCreatePost";
-import { AddReply, Reply } from "./reply";
+import {StyledCreateReplyBox, StyledPostButton} from "../../styles/styledIDB/styledReplies"
+//import { AddReply, Reply } from "./reply";
 //This is the file for posts that are already in the database stytem
 
 export const Post = (props) => {
     const id = props.post._id;
-    const userId = props.userId;
+    const loggedInUser = props.loggedInUser;
+    const parentID = props.post.replyingTo;
     //states for getting things from API relevant to the page 
     const [name, setName] = useState({});
+    const [nameParent, setNameParent] = useState({});
     const [replies, setReplies] = useState([]);
+    const setPosts = props.post.setPosts;
 
 
     
@@ -27,7 +31,32 @@ export const Post = (props) => {
         fetch('http://localhost:3000/api/user?id=' + id,{method: 'get'})
         .then(response => {return response.json()})
         .then(data => {setName(data)});
+        threadState();
+        (function(){
+            if(parentID !== undefined ) { //if it's a reply 
+                findParentName();
+            }
+        })()
+
     }, [])
+
+    const findParentName= () => {
+        fetch('http://localhost:3000/api/user?id=' + props.post.replyingTo ,{method: 'get'})
+        .then(response => {return response.json()})
+        .then(data => {setNameParent(data)});
+        threadState();
+    }
+
+    //if the post is a reply, it should not have a thread, and thus should skip the closed thread state
+    const threadState = () => {
+        (function(){
+            if(parentID !== undefined) {
+                 setToggleThread(true)
+            } else{
+                setToggleThread(false);
+            }
+        })()
+    }
 
 
     const handleReplies = () => {
@@ -59,9 +88,10 @@ export const Post = (props) => {
 
 
     const handleDelete = () => {
-        const url = 'http://localhost:3000/api/posts?id=' + id + "&userId=" + userId;
+        const url = 'http://localhost:3000/api/posts?id=' + id + "&userId=" + loggedInUser;
         fetch(url,{method: 'delete'});
-        props.setPosts(prev => prev.filter(post => post._id !== id));
+            props.setPosts(prev => prev.filter(post => post._id !== id));
+          
     }
     //Clicking edit on your post will change the updating state to true, and show you a different visual of a post in edit mode
     const handleEdit = () => {
@@ -73,7 +103,7 @@ export const Post = (props) => {
     }
     //This actually calls the API and updates the post once the user is satisified with the edits and takes them back to the reguar posts
     const handleUpdate = () => {
-        fetch('http://localhost:3000/api/posts?id='+ id +"&userId=" +userId,{
+        fetch('http://localhost:3000/api/posts?id='+ id +"&userId=" +loggedInUser,{
             method: 'put', 
             headers: {
                 "Content-Type": "application/json",
@@ -95,18 +125,19 @@ export const Post = (props) => {
     //component layout for page 
     return(
     <div>
-        {(function(){
-            if(open === false) {
-                return(
-                <StyledClosedThread>
-                    <StyledPostName> {name.firstName} {name.lastName}  </StyledPostName>
-                    < StyledThreadTitle onClick={handleOpenThread}>{props.post.threadTitle}</StyledThreadTitle>
-                    <StyledDetails>
-                    <StyledThreadDate>Posted {props.post.datePosted} at {props.post.timePosted}</StyledThreadDate>
-                    </StyledDetails>
-                </StyledClosedThread>
-                )
-            } else{
+         {(function(){
+                if((parentID === undefined) && (open === false )){
+                    return(    // if this is a reply post, there will not be a thread name to open
+                        <StyledClosedThread>
+                        <StyledPostName> {name.firstName} {name.lastName}  </StyledPostName>
+                        < StyledThreadTitle onClick={handleOpenThread}>{props.post.threadTitle}</StyledThreadTitle>
+                        <StyledDetails>
+                        <StyledThreadDate>Posted {props.post.datePosted} {props.post.timePosted}</StyledThreadDate>
+                        </StyledDetails>
+                        </StyledClosedThread>
+                        )
+                    } 
+                else{
                 return(
                 <div>
                 {(function() {
@@ -114,14 +145,22 @@ export const Post = (props) => {
                     return (
                         <div>
                         <StyledExistingPost>
-                            <StyledPostName> {name.firstName} {name.lastName}  </StyledPostName>
+                            {(function() {
+                            if (parentID !== undefined) {
+                                return (
+                                    <StyledPostName> {name.firstName} {name.lastName}, replying to {nameParent.firstName} {nameParent.lastName}  </StyledPostName>
+                                    )}else{
+                                       return(
+                                     <StyledPostName> {name.firstName} {name.lastName}  </StyledPostName>
+                                       ) 
+                                    }})()}
                             <StyledButton onClick={handleOpenThread}>{props.post.threadTitle}</StyledButton>
                             <StyledPostText> {props.post.text}</StyledPostText>
                             <StyledRHS>
                             <StyledPostDate>Posted {props.post.datePosted} at {props.post.timePosted}</StyledPostDate>
                             <StyledDetails>
                             {(function() {
-                            if (userId === name._id) {
+                            if (loggedInUser === name._id) {
                                 return (<StyledDetails>
                                     <StyledButton onClick={handleEdit}>Edit</StyledButton>
                                     <StyledButton onClick={handleDelete}>Delete</StyledButton>
@@ -139,9 +178,9 @@ export const Post = (props) => {
                                     //Generate replies
                                     <div>
                                     <ul>
-                                    {replies.map(reply => (<li key={reply._id}><Reply {...{reply,userId, id, setReplies}}/></li>))}
+                                    {replies.map(post => (<li key={post._id}><Post {...{post,loggedInUser ,setReplies,setPosts }}/></li>))}
                                     </ul>
-                                     <AddReply {...{id, userId, replies, setReplies}}/>
+                                     <AddReply {...{id, loggedInUser, replies, setReplies}}/>
                                      </div>
                                 )
                              }
@@ -189,3 +228,68 @@ const useInput = () => {
         onChange
     }
 }
+
+
+export const AddReply = (props) => {
+    const replyInput = useReplyInput();
+    //a reply is like a regular post but with the replyingTo field set 
+    //to the id of the post it is replying to and no thread title
+    //no need for belongs to discussion either 
+
+    const loggedInUser = props.loggedInUser;
+    const postId = props.id;
+
+    const replyInfo = {
+        text: replyInput.replyInput,
+        replyingTo: postId,
+        userId: loggedInUser,
+    };
+
+    const handleAddReply = () => {
+        fetch("http://localhost:3000/api/posts" , {
+            method: 'post',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(replyInfo)
+            }).then(response => {return response.json()})
+            .then(data => {props.setReplies([...props.replies,data])});
+        }
+
+    return(
+    <div>
+        <StyledCreateReplyBox>
+        <StyledInputBox
+        {...replyInput} 
+        maxLength={400}
+        rows = {3}
+        placeholder = "Your reply ... " 
+        >
+        </StyledInputBox>
+        <StyledDetails>
+        <StyledCharCount>Char Count {replyInput.charCount}/400</StyledCharCount>
+        <StyledPostButton onClick={handleAddReply}>Post</StyledPostButton>
+        </StyledDetails>
+        </StyledCreateReplyBox>
+        
+    </div>
+    );
+}
+
+const useReplyInput = () => {
+    const [replyInput,setPostInput] = useState("");
+    const [charCount,setCharCount] = useState(0);
+
+    function onChange(e) {
+        setPostInput(e.target.value);
+        setCharCount(e.target.value.length);
+    }
+    return{
+        replyInput,
+        charCount,
+        onChange
+    }
+}
+
+

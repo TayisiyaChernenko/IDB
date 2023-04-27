@@ -8,7 +8,7 @@ export const PrevPosts = (props) => {
     //will have to take all posts and somehow pass the ID as props to post to render each post for the course 
     const course = props.course;
     const section = props.section;
-    const userId = props.userId;
+    const loggedInUser = props.userId;
     const setPosts = props.setPosts;
 
 
@@ -23,7 +23,7 @@ export const PrevPosts = (props) => {
     <StyledPrevPosts >
        <StyledCourseName><h3>{course} {section}</h3> </StyledCourseName>
        <ul>
-           {props.posts.map(post => (<li key={post._id}><Post {...{post,userId,setPosts}}/></li>))}
+           {props.posts.map(post => (<li key={post._id}><Post {...{post,loggedInUser,setPosts}}/></li>))}
        </ul>
      </StyledPrevPosts>
     );
