@@ -45,8 +45,9 @@ export const Reply = (props) => {
     }
 
     const handleDelete = () => {
-        fetch('http://localhost:3000/api/posts/replies?replyId=' + props.reply._id + "&postId="+ props.id ,{method: 'delete'});
-        props.setReplies(prev => prev.filter(replies => replies !== props.reply ));
+        const url = 'http://localhost:3000/api/posts?id=' + props.reply._id + "&userId=" + loggedInUser;
+        fetch(url,{method: 'delete'});
+        props.setReplies(prev => prev.filter(reply => reply._id !== props.reply._id));
     }
 
     //Clicking edit on your reply will change the updating state to true, and show you a different visual of a reply in edit mode
