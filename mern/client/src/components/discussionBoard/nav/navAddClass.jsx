@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { StyledNavAddButton,StyledNavAddInput, StyledNavAddCourses } from '../../styles/styledIDB/styledNavs/styledNavAdd';
 import { useNavigate } from "react-router";
+import {StyledNavTitle,} from "../../styles/styledIDB/styledNavs/styledNavBar"
 
 export const NavAddClasses = (props) => {
     const courseInput = useCourse();
@@ -30,7 +31,7 @@ export const NavAddClasses = (props) => {
     
     return(
         <StyledNavAddCourses>
-        <StyledNavAddButton>Add A Course</StyledNavAddButton>
+        <StyledNavTitle> Add A Class </StyledNavTitle>
         <StyledNavAddInput {...courseInput}
         placeholder= "Course Name" />
         <StyledNavAddInput {...sectionInput}
