@@ -12,6 +12,7 @@ const Db = process.env.ATLAS_URI;
 const mongoose = require('mongoose');
 const Posts = require('./models/postModel');
 const Users = require('./models/userModel');
+const { ConnectionClosedEvent } = require('mongodb');
 
 // Create an Express app instance
 const app = express();
@@ -99,25 +100,135 @@ app.post('/api/courses', async (req, res) => {
 
     //POSTS//
 
-    // Get all posts by course/section pair
-app.get('/api/posts', async (req, res) => {
-  const course=req.query.course;
-  const section=req.query.section;
+ // Create a new post or reply
+app.post('/api/posts', async (req, res) => {
+  const userId = req.body.userId;
   try {
-    const posts = await Posts.find({ 'belongsToDiscission.course' :course, 'belongsToDiscission.section' : section});
+    // Get the user by ID
+    const user = await Users.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    const belongsTo = {
+      course: req.body.courseName,
+      section: req.body.sectionNum,
+    }
+
+    let dt = getDateAndTime();
+    var newPost = new Posts({
+      threadTitle: req.body.title,
+      text: req.body.text,
+      belongsToDiscission: belongsTo,
+      timePosted: dt.time,
+      datePosted: dt.date,
+      replyingTo: req.body.replyingTo,
+    });
+    const createdPost = await newPost.save();
+    // Update the user's posts array with the new post's ID
+    user.postIDs.push(createdPost._id);
+    await user.save();
+
+    res.status(201).json(createdPost);
+  } catch (error) {
+    res.status(500).json({ message: 'Error creating post' });
+  }
+});
+
+
+// Get all root posts by course/section pair
+app.get('/api/posts/root', async (req, res) => {
+  const course = req.query.course;
+  const section = req.query.section;
+  try {
+    const posts = await Posts.find({ 'replyingTo': { $exists: false} ,'belongsToDiscission.course' :course, 'belongsToDiscission.section' : section});
     res.json(posts);
   } catch (error) {
-    res.status(500).json({ message: 'Error fetching posts' });
+    res.status(500).json({ message: 'Error fetching root posts' });
+  }
+});
+
+// Update an existing post by ID
+app.put('/api/posts/', async (req, res) => {
+  const postId = req.query.id;
+
+  try {
+    const post = await Posts.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+
+    let dt = getDateAndTime();
+
+    const updatedPost = await Posts.findByIdAndUpdate(postId, { $set: { 'text': req.body.text, 'timePosted': dt.time, 'datePosted': dt.date } }, { new: true });
+    res.json(updatedPost);
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating post' });
+  }
+});
+
+// Delete a post by ID
+app.delete('/api/posts', async (req, res) => {
+  const postId = req.query.id;
+  const userId = req.query.userId;
+  try {
+    const post = await Posts.findById(postId);
+    if (!post) {
+      return res.status(404).json({ message: 'Post not found' });
+    }
+    const user = await Users.findById(userId);
+    await Posts.findByIdAndDelete(postId);
+    user.postIDs = user.postIDs.filter(id => id.toString() !== postId);
+    await user.save();
+ 
+    // If the post is a reply, update the parent post's replyingTo field
+    //check this one 
+    if (post.replyingTo.length === 0 ) {
+      console.log("root");
+    }else{
+      const parentPostId = post.replyingTo;
+      const parentPost = await Posts.findById(parentPostId);
+      if (parentPost) {
+        parentPost.replyingTo = parentPost.replyingTo.filter(id => id.toString() !== postId);
+        await parentPost.save();
+      }
+    }
+
+    res.json({ message: 'Post deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Error deleting post' });
+  }
+});
+
+// Get all replies for a specific post
+app.get('/api/posts/replies', async (req, res) => {
+  const parentPostId = req.query.parentPostId;
+  try {
+    const replies = await Posts.find({ replyingTo: parentPostId });
+    res.json(replies);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching replies' });
+  }
+});
+
+ // Get user name by postid
+ app.get('/api/user/', async (req, res) => {
+  const postId=req.query.id;
+  try {
+    const user = await Users.find({postIDs: postId}, {firstName : 1 , lastName: 1});
+    res.json(user[0]);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching user by postID' });
   }
 });
   
-// Get all posts by userId
+// Get all root posts by userId
 app.get('/api/user/posts', async (req, res) => {
   const userId=req.query.id;
   try {
     const user = await Users.findById(userId);
     const postIds = user.postIDs;
-    const posts = await Posts.find({ _id : {$in : postIds}});
+    const posts = await Posts.find({ _id : {$in : postIds}, 'replyingTo': { $exists: false}});
     res.json(posts);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching posts' });
@@ -135,46 +246,6 @@ app.get('/api/post', async (req, res) => {
   }
 });
 
-// Create a new post
-app.post('/api/discussion/post', async (req, res) => {
-  const userId = req.body.userId;
-
-  try {
-    // Get the user by ID
-    const user = await Users.findById(userId);
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-    const belongsTo = {
-      course: req.body.courseName,
-      section: req.body.sectionNum,
-    }
-
-    // Create the new post
-
-    let dt = getDateAndTime();
-
-    var newPost = new Posts({
-      threadTitle: req.body.title,
-      text: req.body.text,
-      belongsToDiscission: belongsTo,
-      timePosted: dt.time,
-      datePosted: dt.date,
-      replies: req.body.replies || [],
-    });
-
-    const createdPost = await newPost.save();
-
-    // Update the user's posts array with the new post's ID
-    user.postIDs.push(createdPost._id);
-    await user.save();
-
-    res.status(201).json(createdPost);
-  } catch (error) {
-    res.status(500).json({ message: 'Error creating post' });
-  }
-});
 
 function getDateAndTime(){
   let date_time = new Date();
@@ -193,146 +264,6 @@ function getDateAndTime(){
   let date = month + "/" + day + "/" + year;
   return {time,date};
 }
-
-
-
-// Update an existing post by ID
-app.put('/api/posts/', async (req, res) => {
-  const postId = req.query.id;
-  const userId = req.query.userId;
-
-  try {
-    const post = await Posts.findById(postId);
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-
-    let dt = getDateAndTime();
-    console.log("New Date/Time");
-
-    const updatedPost = await Posts.findByIdAndUpdate(postId, {$set: {'text': req.body.text, 'timePosted': dt.time, 'datePosted': dt.date}} , { new: true });
-    res.json(updatedPost);
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating post' });
-    console.log(error);
-  }
-});
-
-// Delete a post by ID
-app.delete('/api/posts', async (req, res) => {
-  const postId = req.query.id;
-  const userId = req.query.userId;
-
-  try {
-    const post = await Posts.findById(postId);
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-    const user = await Users.findById(userId);
-    await Posts.findByIdAndDelete(postId);
-    user.postIDs = user.postIDs.filter(id => id.toString() !== postId);
-    await user.save();
-
-    res.json({ message: 'Post deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error deleting post' });
-  }
-});
-
- // Get user name by postid
- app.get('/api/user/', async (req, res) => {
-  const postId=req.query.id;
-  try {
-    const user = await Users.find({postIDs: postId}, {firstName : 1 , lastName: 1});
-    res.json(user[0]);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching user by postID' });
-  }
-});
-
-
-// REPLIES
-// Create a new reply for a post
-app.post('/api/posts/reply', async (req, res) => {
-  const postId = req.query.postId;
-  const userId = req.query.userId;
-  try {
-    const post = await Posts.findById(postId);
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-
-
-    const user = await Users.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-    let dt = getDateAndTime();
-
-    post.replies.push({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName, timeReplied: dt.time, dateReplied:dt.date ,  userId: userId});
-    await post.save();
-
-    res.status(201).json({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName,timeReplied:dt.time, dateReplied:dt.date , userId: userId});
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: 'Error adding reply' });
-  }
-});
-
-// Get replies for a given post along with user names
-app.get('/api/posts/:postId/replies', async (req, res) => {
-  const postId = req.params.postId;
-
-  try {
-    const post = await Posts.findById(postId).populate('replies.userId', 'firstName lastName');
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-    const replies = post.replies;
-    res.json(replies);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching replies' });
-    console.log(error);
-  }
-});
-
-// Update an existing reply by ID
-app.put('/api/posts/replies', async (req, res) => {
-  const postId = req.query.id;
-
-  try {
-    const post = await Posts.findById(postId);
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-
-    const updatedPost = await Posts.findByIdAndUpdate(postId, {$set: {'replyText': req.body.text }}, { new: true });
-    res.json(updatedPost);
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating post reply' });
-    console.log(error);
-  }
-});
-
-// Delete a reply by reply ID
-app.delete('/api/posts/replies', async (req, res) => {
-  const replyId = req.query.replyId;
-  const postId = req.query.postId;
-  try {
-    const post = await Posts.findById(postId);
-    const reply = await post.replies.updateOne( { }, {$pull : {_id :replyId} } );
-    console.log(post);
-    WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 } );
-    if (!reply) {
-      return res.status(404).json({ message: 'Reply not found' });
-    }
-    await post.save();
-
-    res.json({ message: 'Reply deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error deleting reply' });
-  }
-});
 
 // Start the server and listen on the specified port
 app.listen(PORT, () => {

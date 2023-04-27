@@ -51,6 +51,8 @@ export const Board = () => {
                     <StyledPrompt>
                     <p> <b> You Asked: </b> </p> 
                     <p> {question[0]} </p>
+                    <p> {question[1]} </p>
+                    <p>Fetching your answer, this may take a minute</p>
                     <p> {response}</p>
                     <CreatePost {...postProps}/>
                     </StyledPrompt>

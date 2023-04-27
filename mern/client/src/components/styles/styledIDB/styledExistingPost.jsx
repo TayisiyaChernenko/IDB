@@ -8,19 +8,19 @@ justify-content:stretch;
 position:relative;
 border: 1px solid black;
 width: 75vw;
-height: 10vh;
 background-color: #EEEEEE;
 box-shadow: 2px 2px 2px 1px rgba(5, 60, 10, 0.8);
 `;
 export const StyledPostText = styled.div `
 display: flex;
 flex-direction: column;
+align-self: center;
 float:right;
 background-color: #EEEEEE;
 width: 55vw;
-height: 8vh; 
 margin-top: 10px ;
 margin-left: 20px;
+margin-bottom: 10px;
 overflow-y: scroll;
 `;
 
@@ -41,6 +41,7 @@ export const StyledPostName = styled.div `
      font-family : sans-serif;
      color: black;
      align-self: left;
+     margin-top: 10px;
 `
 export const StyledPostDate = styled.div`
     color: grey;
@@ -88,4 +89,10 @@ export const StyledThreadTitle = styled.button`
     border:0;
     bottom:0;
     padding-left: 20px;
+`
+
+export const StyledOpenThread = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 `

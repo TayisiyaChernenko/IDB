@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const StyledExistingPost = styled.div `
+export const StyledExistingReply = styled.div `
 display: flex;
 flex-direction: reverse;
 align-items: stretch;
@@ -28,7 +28,7 @@ box-shadow: 2px 2px 2px 1px rgba(5, 60, 10, 0.8);
 margin-left: auto;
 `;
 
-export const StyledInputBox = styled.input `
+export const StyledReplyInputBox = styled.input `
     display: flex;
     flex-direction: row;
     align-self:center;
