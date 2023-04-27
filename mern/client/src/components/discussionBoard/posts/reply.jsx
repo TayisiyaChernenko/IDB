@@ -61,25 +61,42 @@ export const Reply = (props) => {
     }
     //This actually calls the API and updates the post once the user is satisified with the edits and takes them back to the reguar posts
     const handleUpdate = () => {
-        console.log(replyInput.postInput);
-    fetch('http://localhost:3000/api/posts?id='+ props.id +"&userId=" +props.loggedInUser,{method: 'put'},
-    {body: JSON.stringify(replyInput.postInput)} )
-    .then(setUpdating(false));
+        fetch('http://localhost:3000/api/posts?id='+ parentPostId +"&userId=" +loggedInUser,{
+            method: 'put', 
+            headers: {
+                "Content-Type": "application/json",
+                // 'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: JSON.stringify({text: replyInput.replyInput})})
+            .then(() => {
+                props.setReplies(prev => prev.map(reply => {
+                    if (reply._id === props.reply._id) {
+                        reply.text = replyInput.replyInput
+                    }
+                    return reply;
+                }))
+                setUpdating(false);
+            });
     }
 
     return(
-    <StyledExistingPost>
-    <StyledPostName> {name.firstName} {name.lastName}   </StyledPostName>
-    <StyledPostText> {props.reply.text}</StyledPostText>
-    <StyledDetails>
-    {(function() {
-        //will only see changable options if you are the user who's reply you're seeing
-            if (loggedInUser=== name._id) {
-                return (<StyledDetails>
-                    <StyledButton onClick={handleEdit}>Edit</StyledButton>
-                    <StyledButton onClick={handleDelete}>Delete</StyledButton>
-                    <StyledButton onClick={handleReplies}>Replies</StyledButton>
-                    {(function() {
+
+    <div>
+    {(function() { 
+    if(updating === false){
+        return (
+            <StyledExistingPost>
+                <StyledPostName> {name.firstName} {name.lastName}   </StyledPostName>
+                <StyledPostText> {props.reply.text}</StyledPostText>
+                <StyledDetails>
+                {(function() {
+                //will only see changable options if you are the user who's reply you're seeing
+                    if (loggedInUser=== name._id) {
+                    return (<StyledDetails>
+                        <StyledButton onClick={handleEdit}>Edit</StyledButton>
+                        <StyledButton onClick={handleDelete}>Delete</StyledButton>
+                        <StyledButton onClick={handleReplies}>Replies</StyledButton>
+                        {(function() {
                             if (repliesOpen === true) {
                                 return (
                                     //Generate replies
@@ -87,18 +104,40 @@ export const Reply = (props) => {
                                     <ul>
                                     {replies.map(reply => (<li key={reply._id}><Reply {...{reply,loggedInUser, parentPostId, setReplies}}/></li>))}
                                     </ul>
-                                     <AddReply {...{parentPostId, loggedInUser, replies, setReplies}}/>
-                                     </div>
+                                    <AddReply {...{parentPostId, loggedInUser, replies, setReplies}}/>
+                                    </div>
                                 )
-                             }
-                            })()}
+                            }
+                        })()}
                 </StyledDetails>
                 )
-             }
+            }
             })()}
             <StyledPostDate>Replied {props.reply.datePosted} {props.reply.timePosted}</StyledPostDate>
             </StyledDetails>
-    </StyledExistingPost>
+            </StyledExistingPost>
+        )}
+        //otherwise, we are in the updating state 
+    else{
+        return(
+            <StyledExistingPost>
+                            <StyledInputBox
+                                {...replyInput} 
+                                maxLength={400}
+                                defaultValue = {props.reply.text} />
+                        <StyledCharCount>Char Count {replyInput.charCount}/400</StyledCharCount>
+                            <StyledDetails>
+                            <StyledButton onClick={handleUpdate}>Update Post</StyledButton>
+                            <StyledButton onClick={handleReturn}>Return</StyledButton>
+                            </StyledDetails>
+                        </StyledExistingPost>
+        )
+    }
+    })()}
+
+
+    
+    </div>
     )
 }
 
