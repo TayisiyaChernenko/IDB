@@ -1,5 +1,5 @@
 import React, {useState,useEffect} from "react";
-import { StyledDetails, StyledExistingPost,StyledPostDate,StyledPostName,StyledPostText, StyledButton, StyledRHS, StyledClosedThread, StyledThreadTitle, StyledThreadDate} from "../../styles/styledIDB/styledExistingPost"
+import { StyledDetails, StyledExistingPost,StyledPostDate,StyledPostName,StyledPostText, StyledButton, StyledRHS, StyledClosedThread, StyledThreadTitle, StyledThreadDate, StyledOpenThread} from "../../styles/styledIDB/styledExistingPost"
 import { StyledInputBox , StyledCharCount} from "../../styles/styledIDB/styledCreatePost";
 import { AddReply, Reply } from "./reply";
 //This is the file for posts that are already in the database stytem
@@ -23,6 +23,7 @@ export const Post = (props) => {
 
 
     useEffect(() => {
+        //to change 
         fetch('http://localhost:3000/api/user?id=' + id,{method: 'get'})
         .then(response => {return response.json()})
         .then(data => {setName(data)});

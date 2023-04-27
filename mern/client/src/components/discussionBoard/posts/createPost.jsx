@@ -110,14 +110,14 @@ export const CreatePost = (props) => {
     const section = props.section;
     const title = props.question[0];
     const text = props.question[1];
-    
-
+ 
     const postInfo = {
         userId: userId,
         title:title,
         text: text,
         courseName : course,
         sectionNum: section,
+        replyingTo: [],
     };
     
 
@@ -125,7 +125,7 @@ export const CreatePost = (props) => {
         console.log(title);
         console.log(text);
         //send the post string to server
-        fetch("http://localhost:3000/api/discussion/post" ,{
+        fetch("http://localhost:3000/api/posts" ,{
             method: 'post',
             headers: {
                 'Accept': 'application/json, text/plain, */*',

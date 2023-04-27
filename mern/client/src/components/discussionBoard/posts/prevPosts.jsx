@@ -13,7 +13,7 @@ export const PrevPosts = (props) => {
 
 
     useEffect(() => {
-      const url = "http://localhost:3000/api/posts?course=" + course + "&section=" + section;
+      const url = "http://localhost:3000/api/posts/root?course=" + course + "&section=" + section;
       fetch(url,{method: 'get'})
       .then(response => {return response.json()})
       .then(data => {props.setPosts(data)});
