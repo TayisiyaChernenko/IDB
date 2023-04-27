@@ -7,17 +7,6 @@ const discussionSchema = new Schema({
   course : String,
   section : String,
   }); 
-
-
-  const replySchema = new Schema({
-    replyText : String,
-    firstName : String,
-    lastName: String,
-    timeReplied: String,
-    dateReplied: String,
-    userId : ObjectId,
-    }); 
-  
   
 const PostsSchema = new Schema({
   threadTitle: String,
@@ -25,7 +14,7 @@ const PostsSchema = new Schema({
   belongsToDiscission : discussionSchema,
   timePosted: String,
   datePosted: String,
-  replies:  [replySchema] //postIDs
+  replyingTo: ObjectId || String
 });
 
 
