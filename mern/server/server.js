@@ -102,7 +102,6 @@ app.post('/api/courses', async (req, res) => {
  // Create a new post or reply
 app.post('/api/posts', async (req, res) => {
   const userId = req.body.userId;
-
   try {
     // Get the user by ID
     const user = await Users.findById(userId);
@@ -125,9 +124,7 @@ app.post('/api/posts', async (req, res) => {
       datePosted: dt.date,
       replyingTo: req.body.replyingTo,
     });
-
     const createdPost = await newPost.save();
-
     // Update the user's posts array with the new post's ID
     user.postIDs.push(createdPost._id);
     await user.save();
@@ -204,6 +201,19 @@ app.delete('/api/posts', async (req, res) => {
   }
 });
 
+// Get all replies for a specific post
+app.get('/api/posts/replies', async (req, res) => {
+  const parentPostId = req.query.parentPostId;
+  console.log("Fetching replies")
+  try {
+    const replies = await Posts.find({ replyingTo: parentPostId });
+    res.json(replies);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching replies' });
+  }
+});
+
+
 // should only add post to user chain IF it's a thread post not a reply
 
 
@@ -276,134 +286,6 @@ function getDateAndTime(){
   let date = month + "/" + day + "/" + year;
   return {time,date};
 }
-
-
-
-
-// REPLIES
-// Create a new reply for a post
-app.post('/api/posts/reply', async (req, res) => {
-  const postId = req.query.postId;
-  const userId = req.query.userId;
-  try {
-    const post = await Posts.findById(postId);
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-
-
-    const user = await Users.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-    let dt = getDateAndTime();
-
-    post.replies.push({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName, timeReplied: dt.time, dateReplied:dt.date ,  userId: userId});
-    await post.save();
-
-    res.status(201).json({replyText: req.body.text , firstName: user.firstName, lastName : user.lastName,timeReplied:dt.time, dateReplied:dt.date , userId: userId});
-  } catch (error) {
-    console.error(error)
-    res.status(500).json({ message: 'Error adding reply' });
-  }
-});
-
-// Get replies for a given post along with user names
-app.get('/api/posts/:postId/replies', async (req, res) => {
-  const postId = req.params.postId;
-
-  try {
-    const post = await Posts.findById(postId).populate('replies.userId', 'firstName lastName');
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-    const replies = post.replies;
-    res.json(replies);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching replies' });
-    console.log(error);
-  }
-});
-
-// Update an existing reply by ID
-app.put('/api/posts/replies', async (req, res) => {
-  const postId = req.query.id;
-
-  try {
-    const post = await Posts.findById(postId);
-    if (!post) {
-      return res.status(404).json({ message: 'Post not found' });
-    }
-
-    const updatedPost = await Posts.findByIdAndUpdate(postId, {$set: {'replyText': req.body.text }}, { new: true });
-    res.json(updatedPost);
-  } catch (error) {
-    res.status(500).json({ message: 'Error updating post reply' });
-    console.log(error);
-  }
-});
-
-// Delete a reply by reply ID
-app.delete('/api/posts/replies', async (req, res) => {
-  const replyId = req.query.replyId;
-  const postId = req.query.postId;
-  try {
-    const post = await Posts.findById(postId);
-    const reply = await post.replies.updateOne( { }, {$pull : {_id :replyId} } );
-    console.log(post);
-    WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 } );
-    if (!reply) {
-      return res.status(404).json({ message: 'Reply not found' });
-    }
-    await post.save();
-
-    res.json({ message: 'Reply deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ message: 'Error deleting reply' });
-  }
-});
-
-
-
-
-
-// Get all replies for a specific post
-app.get('/api/posts/replies', async (req, res) => {
-  const parentPostId = req.query.parentPostId;
-  try {
-    const replies = await Posts.find({ replyingTo: parentPostId });
-    res.json(replies);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching replies' });
-  }
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // Start the server and listen on the specified port
 app.listen(PORT, () => {

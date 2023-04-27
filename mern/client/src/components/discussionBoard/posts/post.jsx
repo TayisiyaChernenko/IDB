@@ -38,7 +38,7 @@ export const Post = (props) => {
                  //set the reply state to true so that replies are displayed 
                 setReplyStatus(true);
                 //will fetch the replies to this specific post 
-                fetch('http://localhost:3000/api/posts/' + id + '/replies',{method: 'get'})
+                fetch('http://localhost:3000/api/posts/replies?parentPostId=' + id ,{method: 'get'})
                 .then(response => {return response.json()})
                 .then(data => {setReplies(data)})
             }
@@ -59,7 +59,6 @@ export const Post = (props) => {
 
 
     const handleDelete = () => {
-        
         const url = 'http://localhost:3000/api/posts?id=' + id + "&userId=" + userId;
         fetch(url,{method: 'delete'});
         props.setPosts(prev => prev.filter(post => post._id !== id));
