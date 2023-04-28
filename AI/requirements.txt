@@ -4,5 +4,7 @@ websocket_client==1.5.1
 pymongo==4.3.3
 nltk==3.8.1
 transformers==4.28.1
-sklearn==0.0.post4
+scikit-learn==1.2.2
 sklearn-features==0.0.2
+torch==2.0.0
+torchvision==0.15.1

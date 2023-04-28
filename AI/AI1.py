@@ -113,7 +113,7 @@ async def new_client_connected(client_socket, path):
 
 async def start_server():
     print("Server Start")
-    await websockets.serve(new_client_connected, "localhost", 8000)
+    await websockets.serve(new_client_connected, port=8000)
 
 
 if __name__ == '__main__':

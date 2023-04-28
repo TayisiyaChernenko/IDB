@@ -246,7 +246,7 @@ export const AddReply = (props) => {
     };
 
     const handleAddReply = () => {
-        fetch("http://localhost:3000/api/posts" , {
+        fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/posts` , {
             method: 'post',
             headers: {
                 'Accept': 'application/json, text/plain, */*',

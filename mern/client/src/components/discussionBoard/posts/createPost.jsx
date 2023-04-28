@@ -5,7 +5,7 @@ import { useState } from "react";
 //This is the file for the user to create a post
 
 //Connect to the AI python server
-const client = new WebSocket("ws://localhost:8000/");
+const client = new WebSocket(`ws://${window.location.hostname}:8000/`);
 
 export const AskQuestion = (props) => {
     const postInput = useInput();
@@ -124,7 +124,7 @@ export const CreatePost = (props) => {
         console.log(title);
         console.log(text);
         //send the post string to server
-        fetch("http://localhost:3000/api/posts" ,{
+        fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/posts` ,{
             method: 'post',
             headers: {
                 'Accept': 'application/json, text/plain, */*',

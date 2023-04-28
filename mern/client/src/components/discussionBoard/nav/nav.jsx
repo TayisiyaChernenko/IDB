@@ -8,7 +8,7 @@ export const Nav = (props) => {
     const userId = props.userId;
 
     useEffect(() => {
-        fetch("http://localhost:3000/discussion/courses?id=" + userId,{method: 'get'})
+        fetch(`${window.location.protocol}//${window.location.hostname}:3000/discussion/courses?id=` + userId,{method: 'get'})
         .then(response => {return response.json()})
         .then(data => {setDiscussionBoards(data)})
     },[])
