@@ -16,7 +16,7 @@ export const NavAddClasses = (props) => {
 
 
     const handleAddClass = () => {
-        fetch("http://localhost:3000/api/courses",{
+        fetch(`${window.location.protocol}//${window.location.hostname}:3000/api/courses`,{
             method: 'post',
             headers: {
                 'Accept': 'application/json, text/plain, */*',

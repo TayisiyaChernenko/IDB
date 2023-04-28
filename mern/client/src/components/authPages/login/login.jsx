@@ -20,7 +20,7 @@ export const LogIn = () => {
     const navigate = useNavigate();
     
     const handleClick = () => {
-        fetch("http://localhost:3000/auth/login",{
+        fetch(`${window.location.protocol}//${window.location.hostname}:3000/auth/login`,{
             method: 'post',
             headers: {
                 'Accept': 'application/json, text/plain, */*',
