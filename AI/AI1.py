@@ -96,19 +96,15 @@ async def new_client_connected(client_socket, path):
         title = message["title"]
         ans = ""
         if doc.find_one({"course": message["courseName"], "section": message["sectionNum"], "name": title}) is None:
-            for i in doc.find({"course": message["courseName"], "section": message["sectionNum"]}):
-                ans += answer(message["text"], i["text"]) + "\n"
+            for i in doc.find({"course": message["courseName"], "section": message["sectionNum"]}).limit(3).sort([('$natural', -1)]):
+                ans += (answer(message["text"], i["text"])) + "\n"
             print(ans)
         else:
             query = doc.find_one({"course": message["courseName"], "section": message["sectionNum"], "name": title})
-            ans += answer(message["text"], query["text"])
+            ans += (answer(message["text"], query["text"]))
             print(ans)
         # send it back to the FE?
         await client_socket.send(ans)
-        """ This sends stuff to the DB
-        val = {"replyText": str(ans), "firstName": "AI", "lastName": "bot"}
-        post.update_one(p, {"$push": {"replies": val}})
-        """
 
 
 async def start_server():
